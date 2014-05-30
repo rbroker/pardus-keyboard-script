@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         5
+// @version         6
 // @require         http://www.grandunifyingalliance.com/gm/pal/0.7/pal.js
 // @author          Richard Broker (Beigeman)
 // ==/UserScript==
@@ -919,7 +919,7 @@ function ScanMO()
     {
         if (ths[i].textContent === "Other Ships")
         {
-            ships = ths[i].parentNode.parentNode.childNodes[1].childNodes;
+            ships = ths[i].parentNode.parentNode.getElementsByTagName('td');
             break;
         }
     }
@@ -1143,6 +1143,8 @@ function ScanForTargets(scope, ignorePriorityTargets)
 
 function SortPilotArray()
 {
+	PAL.DebugLog("Sorting pilot array (" + pilots.length + " targets)", PAL.e_logLevel.VERBOSE);
+	
     /* If we have some priority targets from our scan, then sort them to the front of the array. */
     if ((pilots.length > 1) && (config.arrPriorityTargets.length > 0))
     {
