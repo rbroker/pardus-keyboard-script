@@ -10,7 +10,8 @@
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
 // @version         7
-// @require         http://www.grandunifyingalliance.com/gm/pal/0.7/pal.js
+// @downloadURL		https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
+// @require         http://www.grandunifyingalliance.com/gm/pal/0.8/pal.js
 // @author          Richard Broker (Beigeman)
 // ==/UserScript==
 
@@ -107,6 +108,11 @@ var DEFAULT_KEY_AUTO_TRADE = ' ';
  */
 var SHIP_DATA = { "sabre":{size:12,skulls:1},"rustclaw":{size:63,skulls:0},"interceptor":{size:8,skulls:6},"lanner_mini":{size:45,skulls:0},"harrier":{size:56,skulls:2},"mercury":{size:27,skulls:5},"hercules":{size:66,skulls:1},"lanner":{size:98,skulls:0},"hawk":{size:33,skulls:6},"gargantua":{size:79,skulls:4},"behemoth":{size:206,skulls:0},"liberator":{size:82,skulls:4},"leviathan":{size:408,skulls:0},"wasp":{size:14,skulls:4},"adder":{size:18,skulls:1},"thunderbird":{size:29,skulls:2},"viper_defence_craft":{size:10,skulls:6},"babel_transporter":{size:92,skulls:0},"piranha":{size:24,skulls:6},"nighthawk":{size:29,skulls:6},"nighthawk_deluxe":{size:36,skulls:6},"mantis":{size:134,skulls:2},"extender":{size:104,skulls:0},"gauntlet":{size:68,skulls:6},"doomstar":{size:101,skulls:5},"war_nova":{size:250,skulls:5},"ficon":{size:17,skulls:4},"tyrant":{size:74,skulls:0},"spectre":{size:34,skulls:1},"shadow_stealth_craft":{size:7,skulls:6},"venom":{size:46,skulls:4},"constrictor":{size:131,skulls:0},"phantom_advanced_stealth_craft":{size:23,skulls:6},"dominator":{size:88,skulls:5},"boa_ultimate_carrier":{size:182,skulls:0},"mooncrusher":{size:142,skulls:3},"rustfire":{size:60,skulls:2},"marauder":{size:14,skulls:6},"junkeriv":{size:52,skulls:0},"slider":{size:38,skulls:3},"elpadre":{size:140,skulls:0},"chitin":{size:40,skulls:5},"horpor":{size:78,skulls:4},"scorpion":{size:84,skulls:5},"rover":{size:20,skulls:5},"reaper":{size:50,skulls:6},"blood_lanner":{size:98,skulls:3},"sudden_death":{size:75,skulls:6},"harvester":{size:59,skulls:5},"trident":{size:26,skulls:5},"celeus":{size:90,skulls:0},"pantagruel":{size:39,skulls:5},"vulcan":{size:30,skulls:4},"nano":{size:9,skulls:6},"liberator_eps":{size:85,skulls:4} };
 
+/* Action definitions for clicking ship images on nav. */
+var ACTION_DEFAULT = 0; 
+var ACTION_ATTACK = 1;
+var ACTION_TRADE = 2;
+
 /* *******************************************
  * Main Operations
  * *******************************************/
@@ -132,7 +138,7 @@ if (config !== null)
 		else if (config.version === 5)
 		{
 			upgrade_5_to_6();
-		}
+		}		
         else
         {
             PAL.Toast("Your configuration for this universe has been reset after a script update because no safe upgrade could be performed from " + config.version + " to " + CONFIG_VERSION, PAL.e_toastStyle.NOTIFY);
@@ -186,7 +192,7 @@ if (config.universeEnabled)
     else if (PAL.PageIs(PAL.e_page.BUILDING))
     {
         on_building = true;
-        
+
         CheckAP();
 
         if (config.showBuildingHP)
@@ -224,7 +230,7 @@ if (config.universeEnabled)
         GetCurrentCombatModePvP();
         SetCombatRoundsNPC();
 
-        UseBots();        
+        UseBots();
 		CheckAP();
     }
 
@@ -271,7 +277,7 @@ function ApplyDefaultConfig()
     config.stopOnFirstHostile = true;  // Stop searching for targets after the first QL hit.
     config.showBuildingHP = false;     // Determine building health and display it as a number (BROKEN).
     config.enableDebugLogging = false; // Indicates whether to use verbose or minimal logging.
-    config.quickMouse = false;         // Enable clicking ship pictures on nav to attack pilots.
+    config.quickMouse = ACTION_DEFAULT; // Defines action performed when clicking ship image on Nav. 0: Default,  1: Attack, 2: Trade
 	config.countPilots = false;        // Enable counting the number of pilots on the current tile.
     config.key_retreat = DEFAULT_KEY_RETREAT;
     config.key_return_nav = DEFAULT_KEY_RETURN_NAV;
@@ -314,8 +320,8 @@ function CommonNav()
     on_nav = true;
 
     CheckAPNav();
-    InjectRepairButtons();    
-    AddQuickMouseCallbacks();		
+    InjectRepairButtons();
+    AddQuickMouseCallbacks();
 	CountPilotsNav();
 }
 
@@ -382,40 +388,57 @@ function GetFaction(element)
 }
 
 function AddQuickMouseCallbacks()
-{
-	if (config.quickMouse)
+{	
+	if (!(config.quickMouse > ACTION_DEFAULT))
 		return;
 
     var ships = doc.getElementById('otherships_content');
 
     if (!ships)
         return;
-
+		
     for (var i = 0; i < ships.childNodes.length; i++)
-    {
+    {	
         var id = parseInt(ships.childNodes[i].id.match(/\d+/)[0], 10);
 
         if (!id)
             continue;
-
+			
         var shipImg = ships.childNodes[i].childNodes[0].childNodes[0].childNodes[0];
 
         if (!shipImg)
             continue;
 
         shipImg.setAttribute('onclick', 'return false;'); // Doesn't work in chrome unless you remove the old onclick first.
-        shipImg.onclick = QuickMouseCallback(id);
-        shipImg.title = "Attack!";
-
+		
+		if (config.quickMouse == ACTION_ATTACK)
+		{
+			shipImg.onclick = QuickMouseCallbackAttack(id);
+			shipImg.title = "Attack!";
+		}
+		else if (config.quickMouse == ACTION_TRADE)
+		{
+			shipImg.onclick = QuickMouseCallbackTrade(id);
+			shipImg.title = "Trade!";
+		}
     }
 }
 
-function QuickMouseCallback(id)
+function QuickMouseCallbackAttack(id)
 {
     return function()
     {
         PAL.DebugLog("Attacking by image click: " + id, PAL.e_logLevel.VERBOSE);
         doc.location.href = "ship2ship_combat.php?playerid=" + id;
+    };
+}
+
+function QuickMouseCallbackTrade(id)
+{
+    return function()
+    {
+        PAL.DebugLog("Trading by image click: " + id, PAL.e_logLevel.VERBOSE);		
+        doc.location.href = "ship2ship_transfer.php?playerid=" + id;
     };
 }
 
@@ -440,32 +463,32 @@ function CountPilotsNav()
 {
 	if (!config.countPilots)
 		return;
-		
+
 	var ships = doc.getElementById("otherships_content");
 
-    if (!ships) 
+    if (!ships)
 		return;
 
     var tables = ships.getElementsByTagName('table');
 
     if (!tables)
 		return;
-		
+
 	var count = 0;
-	
+
 	for (var i = 0; i < tables.length; i++)
 	{
 		var links = tables[i].getElementsByTagName('a');
-		
+
 		for (var j = 0; j < links.length; j++)
 		{
 			if (links[j].href.indexOf("player") > 0)
 				count++;
 		}
 	}
-		
-	var div = CreatePlainDiv("<strong>" + count + "Pilots</strong><br>", "95%");
-		
+
+	var div = CreatePlainDiv("<strong>" + count + " Pilots</strong><br>", "95%");
+
 	ships.insertBefore(div, ships.firstChild);
 }
 
@@ -483,22 +506,22 @@ function CountPilotsMO()
         }
     }
 
-    if (!dataCells) 
+    if (!dataCells)
 		return;
-		
+
 	var count = 0;
-	
+
 	for (var i = 0; i < dataCells.length; i++)
 	{
 		var links = dataCells[i].getElementsByTagName('a');
-		
+
 		for (var j = 0; j < links.length; j++)
 		{
 			if (links[j].href.indexOf("player") > 0)
 				count++;
 		}
 	}
-	
+
 	// #TODO how to display?
 }
 
@@ -1052,7 +1075,7 @@ function ScanForTargets(scope, ignorePriorityTargets)
 			PAL.DebugLog("Not targeting pilot, unable to retrieve enough data to make a targeting decision!", PAL.e_logLevel.VERBOSE);
 			continue;
 		}
-		
+
 		if (IsNewbie(pilotObj.id))
 			continue;
 
@@ -1123,7 +1146,7 @@ function ScanForTargets(scope, ignorePriorityTargets)
 					}
 				}
 			}
-		}		
+		}
 
 		/*
 		 * Check if Individual is included/excluded
@@ -1215,7 +1238,7 @@ function ScanForTargets(scope, ignorePriorityTargets)
 function SortPilotArray()
 {
 	PAL.DebugLog("Sorting pilot array (" + pilots.length + " targets)", PAL.e_logLevel.VERBOSE);
-	
+
     /* If we have some priority targets from our scan, then sort them to the front of the array. */
     if ((pilots.length > 1) && (config.arrPriorityTargets.length > 0))
     {
@@ -1350,9 +1373,9 @@ function stripPaintJobs(shipName)
 /* Determines how many bots to use when on combat screen. */
 function UseBots()
 {
-	if (!config.calculateBotUsage)  
+	if (!config.calculateBotUsage)
 		return;
-		
+
     var currentArmor = GetCurrentArmorValue();
     var botInput = SearchForTagByValue('input', 'resid', '8');
 
@@ -1489,7 +1512,7 @@ function CheckAPNav()
 {
     if (!config.lowAPWarning)
 		return;
-		
+
     var apSpan = doc.getElementById('apsleft');
 
     if (apSpan)
@@ -1829,9 +1852,10 @@ function InjectOptionsForm()
             ["Add agi-boost button to the nav screen","useFastAB"],
             ["Add timebomb buttons to the nav screen", "useFastTBDeploy"],
             ["Add OC/BAL/DC buttons to the nav screen", "useFastCombatModes"],
-            ["Show building HP number when attacking (BROKEN)", "showBuildingHP"],
-            ["Click Ship Images to Attack Pilots", "quickMouse"],
+            ["Show building HP number when attacking (BROKEN)", "showBuildingHP"],            
 			["Display number of pilots on current tile", "countPilots"],
+			[],
+			["Action when clicking ship image on Nav:", "quickMouse", [0,1,2], ["Default", "Attack Pilot", "Trade with Pilot"]],
             [],
             ["Show low AP warning when below this many AP:", "lowAPThreshold"],
             []
@@ -1891,6 +1915,8 @@ function StoreConfiguration()
 {
     if (!(VerifyKeybindings() && VerifyNumericFields()))
         return;
+		
+		console.log(config);
 
     ParsePriorityTargets();
     PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
@@ -1997,6 +2023,12 @@ function upgrade_4_2_to_5()
 function upgrade_5_to_6()
 {
 	config.countPilots = false;
+	
+	if (config.quickMouse)
+		config.quickMouse = ACTION_ATTACK;
+	else
+		config.quickMouse = ACTION_DEFAULT;
+	
 	config.version = 6;
 	PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
 }
