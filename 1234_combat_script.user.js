@@ -168,8 +168,8 @@ if (config.universeEnabled)
         CheckRaid();
         CheckAllMissiles();
 
-        if (config.calculateBotUsage)  UseBots();
-        if (config.lowAPWarning)       CheckAP();
+        UseBots();
+		CheckAP();
     }
     else if (PAL.PageIs(PAL.e_page.NAV))
     {
@@ -186,9 +186,8 @@ if (config.universeEnabled)
     else if (PAL.PageIs(PAL.e_page.BUILDING))
     {
         on_building = true;
-
-        if (config.lowAPWarning)
-            CheckAP();
+        
+        CheckAP();
 
         if (config.showBuildingHP)
             ShowBuildingHP();
@@ -225,8 +224,8 @@ if (config.universeEnabled)
         GetCurrentCombatModePvP();
         SetCombatRoundsNPC();
 
-        if (config.calculateBotUsage)  UseBots();
-        if (config.lowAPWarning)       CheckAP();
+        UseBots();        
+		CheckAP();
     }
 
     /* Begin listening for keypresses if the script is enabled in this universe. */
@@ -1351,6 +1350,9 @@ function stripPaintJobs(shipName)
 /* Determines how many bots to use when on combat screen. */
 function UseBots()
 {
+	if (!config.calculateBotUsage)  
+		return;
+		
     var currentArmor = GetCurrentArmorValue();
     var botInput = SearchForTagByValue('input', 'resid', '8');
 
@@ -1456,6 +1458,9 @@ function SetAmbushRP()
 
 function CheckAP()
 {
+	if (!config.lowAPWarning)
+		return;
+
     var boldTags = doc.getElementsByTagName('b');
     var found = false;
     var ap = 0;
