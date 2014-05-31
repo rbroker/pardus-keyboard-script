@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         6
+// @version         7
 // @require         http://www.grandunifyingalliance.com/gm/pal/0.7/pal.js
 // @author          Richard Broker (Beigeman)
 // ==/UserScript==
@@ -20,7 +20,7 @@
 var PAL = PardusMonkey("Beige's Combat Script", "PAL52028fe910329");
 var doc = document;
 var url = doc.location.href; // Don't move this down in the code!
-var CONFIG_VERSION = 5;    // Only update this if the config changes, or users will lose their config.
+var CONFIG_VERSION = 6;    // Only update this if the config changes, or users will lose their config.
 
 /*
  * Localstorage value keys. Used to load script configuration.
@@ -118,14 +118,20 @@ if (config !== null)
 {
     if (config.version !== CONFIG_VERSION)
     {
-        if (config.version == 4.1)
+        if (config.version === 4.1)
         {
             upgrade_4_1_to_4_2();
 			upgrade_4_2_to_5();
+			upgrade_5_to_6();
         }
-		else if (config.version == 4.2)
+		else if (config.version === 4.2)
 		{
 			upgrade_4_2_to_5();
+			upgrade_5_to_6();
+		}
+		else if (config.version === 5)
+		{
+			upgrade_5_to_6();
 		}
         else
         {
@@ -264,9 +270,10 @@ function ApplyDefaultConfig()
     config.useRangeInclude = true;     // Include by size and class.
     config.lowAPWarning = true;        // use custom "low AP" warning level
     config.stopOnFirstHostile = true;  // Stop searching for targets after the first QL hit.
-    config.showBuildingHP = false;      // Determine building health and display it as a number (BROKEN).
+    config.showBuildingHP = false;     // Determine building health and display it as a number (BROKEN).
     config.enableDebugLogging = false; // Indicates whether to use verbose or minimal logging.
     config.quickMouse = false;         // Enable clicking ship pictures on nav to attack pilots.
+	config.countPilots = false;        // Enable counting the number of pilots on the current tile.
     config.key_retreat = DEFAULT_KEY_RETREAT;
     config.key_return_nav = DEFAULT_KEY_RETURN_NAV;
     config.key_ambush = DEFAULT_KEY_AMBUSH;
@@ -307,14 +314,10 @@ function CommonNav()
 {
     on_nav = true;
 
-    if (config.lowAPWarning)
-        CheckAPNav();
-
-    if (config.useFastRepair)
-        InjectRepairButtons();
-
-    if (config.quickMouse)
-        AddQuickMouseCallbacks();
+    CheckAPNav();
+    InjectRepairButtons();    
+    AddQuickMouseCallbacks();		
+	CountPilotsNav();
 }
 
 /* Function by Rhindon. Checks all missiles on combat screen. */
@@ -381,6 +384,9 @@ function GetFaction(element)
 
 function AddQuickMouseCallbacks()
 {
+	if (config.quickMouse)
+		return;
+
     var ships = doc.getElementById('otherships_content');
 
     if (!ships)
@@ -429,6 +435,72 @@ function ShowBuildingHP()
 
     // Don't bother with a global regex, it should only appear once in the page.
     conditionTbl.parentNode.innerHTML = conditionTbl.parentNode.innerHTML.replace(/Condition/, "Condition: <b>" + conditionBar.width + "%</b>");
+}
+
+function CountPilotsNav()
+{
+	if (!config.countPilots)
+		return;
+		
+	var ships = doc.getElementById("otherships_content");
+
+    if (!ships) 
+		return;
+
+    var tables = ships.getElementsByTagName('table');
+
+    if (!tables)
+		return;
+		
+	var count = 0;
+	
+	for (var i = 0; i < tables.length; i++)
+	{
+		var links = tables[i].getElementsByTagName('a');
+		
+		for (var j = 0; j < links.length; j++)
+		{
+			if (links[j].href.indexOf("player") > 0)
+				count++;
+		}
+	}
+		
+	var div = CreatePlainDiv("<strong>" + count + "Pilots</strong><br>", "95%");
+		
+	ships.insertBefore(div, ships.firstChild);
+}
+
+function CountPilotsMO()
+{
+	var ths = doc.getElementsByTagName('th');
+    var dataCells;
+
+    for (var i = 0; i < ths.length; i++)
+    {
+        if (ths[i].textContent === "Other Ships")
+        {
+            dataCells = ths[i].parentNode.parentNode.getElementsByTagName('td');
+            break;
+        }
+    }
+
+    if (!dataCells) 
+		return;
+		
+	var count = 0;
+	
+	for (var i = 0; i < dataCells.length; i++)
+	{
+		var links = dataCells[i].getElementsByTagName('a');
+		
+		for (var j = 0; j < links.length; j++)
+		{
+			if (links[j].href.indexOf("player") > 0)
+				count++;
+		}
+	}
+	
+	// #TODO how to display?
 }
 
 /* Set the combat rounds for this attack to the user-selected value. */
@@ -1410,6 +1482,9 @@ function CheckAP()
 /* Changes colour of AP counter when it falls below user-defined level. */
 function CheckAPNav()
 {
+    if (!config.lowAPWarning)
+		return;
+		
     var apSpan = doc.getElementById('apsleft');
 
     if (apSpan)
@@ -1465,6 +1540,9 @@ function calculateBotRequirement(currentArmor)
 /* If you're on a planet or base, adds repair links to the nav. */
 function InjectRepairButtons()
 {
+    if (!config.useFastRepair)
+		return;
+
     var sb = doc.getElementById('aCmdStarbase');
     var planet = doc.getElementById('aCmdPlanet');
 
@@ -1748,6 +1826,7 @@ function InjectOptionsForm()
             ["Add OC/BAL/DC buttons to the nav screen", "useFastCombatModes"],
             ["Show building HP number when attacking (BROKEN)", "showBuildingHP"],
             ["Click Ship Images to Attack Pilots", "quickMouse"],
+			["Display number of pilots on current tile", "countPilots"],
             [],
             ["Show low AP warning when below this many AP:", "lowAPThreshold"],
             []
@@ -1907,5 +1986,12 @@ function upgrade_4_2_to_5()
 {
 	config.showBuildingHP = false;
 	config.version = 5;
+	PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
+}
+
+function upgrade_5_to_6()
+{
+	config.countPilots = false;
+	config.version = 6;
 	PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
 }
