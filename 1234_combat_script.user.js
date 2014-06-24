@@ -164,6 +164,7 @@ SetLoggingLevel();
 if (config.universeEnabled)
 {
 	PAL.DebugLog("=== Version " + CONFIG_VERSION + " ===", PAL.e_logLevel.VERBOSE);
+    PAL.DebugLog(url, PAL.e_logLevel.VERBOSE);
 
     if (PAL.PageIs(PAL.e_page.SHIP_2_SHIP))
     {
@@ -528,7 +529,7 @@ function CountPilotsMO()
 /* Set the combat rounds for this attack to the user-selected value. */
 function SetCombatRounds()
 {
-    doc.getElementsByTagName('select')[1].selectedIndex = (config.pql[ql_index].combatRounds - 1);
+    doc.getElementsByTagName('select')[0].selectedIndex = (config.pql[ql_index].combatRounds - 1);   
 }
 
 function SetCombatRoundsNPC()
@@ -1818,7 +1819,7 @@ function InjectOptionsForm()
 {
     PAL.AddConfiguration(
         [
-            ["Settings are specific to each universe, so make sure you repeat this configuration for each universe you play!<h3>Ship Settings</h3>"],
+            ["Settings are specific to each universe, so make sure you repeat this configuration for each universe you play!<br /><br /><a href='http://www.grandunifyingalliance.com/gm/script-debug/' target='_blank'><b>Found a bug? Click Here!</b></a><h3>Ship Settings</h3>"],
             ["Armor value you want to return to when using bots (e.g. 720):", "maxArmor"],
             [],
             ["Your ship's armor strength (e.g. x5):", "armorStrength", [1,2,3,4,5,6]],
@@ -1915,8 +1916,6 @@ function StoreConfiguration()
 {
     if (!(VerifyKeybindings() && VerifyNumericFields()))
         return;
-		
-		console.log(config);
 
     ParsePriorityTargets();
     PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
