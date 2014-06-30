@@ -4,7 +4,7 @@
   "name": "Beigeman's Pardus Keyboard Actions Script",
   "short_name" : "Beige's Keyboard Script",
   "description": "Provides additional keyboard-based functionality.",
-  "version": "8",
+  "version": "9",
    "content_scripts": [ {
       "all_frames" : true,
       "exclude_globs": [ "http*://*.pardus.at/msgframe.php*", "http*://*.pardus.at/game.php*", "http*://*.pardus.at/menu.php*" ],
