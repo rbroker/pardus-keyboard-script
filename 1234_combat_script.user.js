@@ -10,7 +10,7 @@
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
 // @version         8
-// @downloadURL		https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
+// @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         http://www.grandunifyingalliance.com/gm/pal/0.8/pal.js
 // @author          Richard Broker (Beigeman)
 // ==/UserScript==
@@ -109,7 +109,7 @@ var DEFAULT_KEY_AUTO_TRADE = ' ';
 var SHIP_DATA = { "sabre":{size:12,skulls:1},"rustclaw":{size:63,skulls:0},"interceptor":{size:8,skulls:6},"lanner_mini":{size:45,skulls:0},"harrier":{size:56,skulls:2},"mercury":{size:27,skulls:5},"hercules":{size:66,skulls:1},"lanner":{size:98,skulls:0},"hawk":{size:33,skulls:6},"gargantua":{size:79,skulls:4},"behemoth":{size:206,skulls:0},"liberator":{size:82,skulls:4},"leviathan":{size:408,skulls:0},"wasp":{size:14,skulls:4},"adder":{size:18,skulls:1},"thunderbird":{size:29,skulls:2},"viper_defence_craft":{size:10,skulls:6},"babel_transporter":{size:92,skulls:0},"piranha":{size:24,skulls:6},"nighthawk":{size:29,skulls:6},"nighthawk_deluxe":{size:36,skulls:6},"mantis":{size:134,skulls:2},"extender":{size:104,skulls:0},"gauntlet":{size:68,skulls:6},"doomstar":{size:101,skulls:5},"war_nova":{size:250,skulls:5},"ficon":{size:17,skulls:4},"tyrant":{size:74,skulls:0},"spectre":{size:34,skulls:1},"shadow_stealth_craft":{size:7,skulls:6},"venom":{size:46,skulls:4},"constrictor":{size:131,skulls:0},"phantom_advanced_stealth_craft":{size:23,skulls:6},"dominator":{size:88,skulls:5},"boa_ultimate_carrier":{size:182,skulls:0},"mooncrusher":{size:142,skulls:3},"rustfire":{size:60,skulls:2},"marauder":{size:14,skulls:6},"junkeriv":{size:52,skulls:0},"slider":{size:38,skulls:3},"elpadre":{size:140,skulls:0},"chitin":{size:40,skulls:5},"horpor":{size:78,skulls:4},"scorpion":{size:84,skulls:5},"rover":{size:20,skulls:5},"reaper":{size:50,skulls:6},"blood_lanner":{size:98,skulls:3},"sudden_death":{size:75,skulls:6},"harvester":{size:59,skulls:5},"trident":{size:26,skulls:5},"celeus":{size:90,skulls:0},"pantagruel":{size:39,skulls:5},"vulcan":{size:30,skulls:4},"nano":{size:9,skulls:6},"liberator_eps":{size:85,skulls:4} };
 
 /* Action definitions for clicking ship images on nav. */
-var ACTION_DEFAULT = 0; 
+var ACTION_DEFAULT = 0;
 var ACTION_ATTACK = 1;
 var ACTION_TRADE = 2;
 
@@ -127,18 +127,18 @@ if (config !== null)
         if (config.version === 4.1)
         {
             upgrade_4_1_to_4_2();
-			upgrade_4_2_to_5();
-			upgrade_5_to_6();
+            upgrade_4_2_to_5();
+            upgrade_5_to_6();
         }
-		else if (config.version === 4.2)
-		{
-			upgrade_4_2_to_5();
-			upgrade_5_to_6();
-		}
-		else if (config.version === 5)
-		{
-			upgrade_5_to_6();
-		}		
+        else if (config.version === 4.2)
+        {
+            upgrade_4_2_to_5();
+            upgrade_5_to_6();
+        }
+        else if (config.version === 5)
+        {
+            upgrade_5_to_6();
+        }
         else
         {
             PAL.Toast("Your configuration for this universe has been reset after a script update because no safe upgrade could be performed from " + config.version + " to " + CONFIG_VERSION, PAL.e_toastStyle.NOTIFY);
@@ -163,7 +163,7 @@ SetLoggingLevel();
  /* Only do something on the nav if this universe is selected. */
 if (config.universeEnabled)
 {
-	PAL.DebugLog("=== Version " + CONFIG_VERSION + " ===", PAL.e_logLevel.VERBOSE);
+    PAL.DebugLog("=== Version " + CONFIG_VERSION + " ===", PAL.e_logLevel.VERBOSE);
     PAL.DebugLog(url, PAL.e_logLevel.VERBOSE);
 
     if (PAL.PageIs(PAL.e_page.SHIP_2_SHIP))
@@ -176,7 +176,7 @@ if (config.universeEnabled)
         CheckAllMissiles();
 
         UseBots();
-		CheckAP();
+        CheckAP();
     }
     else if (PAL.PageIs(PAL.e_page.NAV))
     {
@@ -232,7 +232,7 @@ if (config.universeEnabled)
         SetCombatRoundsNPC();
 
         UseBots();
-		CheckAP();
+        CheckAP();
     }
 
     /* Begin listening for keypresses if the script is enabled in this universe. */
@@ -279,7 +279,7 @@ function ApplyDefaultConfig()
     config.showBuildingHP = false;     // Determine building health and display it as a number (BROKEN).
     config.enableDebugLogging = false; // Indicates whether to use verbose or minimal logging.
     config.quickMouse = ACTION_DEFAULT; // Defines action performed when clicking ship image on Nav. 0: Default,  1: Attack, 2: Trade
-	config.countPilots = false;        // Enable counting the number of pilots on the current tile.
+    config.countPilots = false;        // Enable counting the number of pilots on the current tile.
     config.key_retreat = DEFAULT_KEY_RETREAT;
     config.key_return_nav = DEFAULT_KEY_RETURN_NAV;
     config.key_ambush = DEFAULT_KEY_AMBUSH;
@@ -323,7 +323,7 @@ function CommonNav()
     CheckAPNav();
     InjectRepairButtons();
     AddQuickMouseCallbacks();
-	CountPilotsNav();
+    CountPilotsNav();
 }
 
 /* Function by Rhindon. Checks all missiles on combat screen. */
@@ -361,67 +361,71 @@ function CheckRaid()
 /* Returns either f,u,e or n. */
 function GetFaction(element)
 {
-	var activeElement = null;
+    var activeElement = null;
 
-	// If we're on a building, the faction icon will be on the previous sibling.
-	if (on_building)
-		activeElement = element.previousSibling;
-	else
-		activeElement = element;
+    // If we're on a building, the faction icon will be on the previous sibling.
+    if (on_building)
+        activeElement = element.previousSibling;
+    else
+        activeElement = element;
 
-	var images = activeElement.getElementsByTagName('img');
+    var images = activeElement.getElementsByTagName('img');
 
-	if (!images)
-		return;
+    if (!images)
+        return;
 
-	for (var i = 0; i < images.length; i++)
-	{
-		var match = images[i].src.match(/sign_(emp|fed|uni)_16x16/);
+    for (var i = 0; i < images.length; i++)
+    {
+        var match = images[i].src.match(/sign_(emp|fed|uni)_16x16/);
 
-		if (!match)
-			continue;
+        if (!match)
+            continue;
 
-		return match[1].substr(0,1);
-	}
+        return match[1].substr(0,1);
+    }
 
-	// No faction image, assume neutral.
+    // No faction image, assume neutral.
     return "n";
 }
 
 function AddQuickMouseCallbacks()
-{	
-	if (!(config.quickMouse > ACTION_DEFAULT))
-		return;
+{
+    if (!(config.quickMouse > ACTION_DEFAULT))
+        return;
 
     var ships = doc.getElementById('otherships_content');
 
     if (!ships)
         return;
-		
+
+
+
     for (var i = 0; i < ships.childNodes.length; i++)
-    {	
-        var id = parseInt(ships.childNodes[i].id.match(/\d+/)[0], 10);
+    {
+        var id = ships.childNodes[i].id.match(/\d+/);
 
         if (!id)
             continue;
-			
+
+        id = id[0];
+
         var shipImg = ships.childNodes[i].childNodes[0].childNodes[0].childNodes[0];
 
         if (!shipImg)
             continue;
 
         shipImg.setAttribute('onclick', 'return false;'); // Doesn't work in chrome unless you remove the old onclick first.
-		
-		if (config.quickMouse == ACTION_ATTACK)
-		{
-			shipImg.onclick = QuickMouseCallbackAttack(id);
-			shipImg.title = "Attack!";
-		}
-		else if (config.quickMouse == ACTION_TRADE)
-		{
-			shipImg.onclick = QuickMouseCallbackTrade(id);
-			shipImg.title = "Trade!";
-		}
+
+        if (config.quickMouse == ACTION_ATTACK)
+        {
+            shipImg.onclick = QuickMouseCallbackAttack(id);
+            shipImg.title = "Attack!";
+        }
+        else if (config.quickMouse == ACTION_TRADE)
+        {
+            shipImg.onclick = QuickMouseCallbackTrade(id);
+            shipImg.title = "Trade!";
+        }
     }
 }
 
@@ -438,7 +442,7 @@ function QuickMouseCallbackTrade(id)
 {
     return function()
     {
-        PAL.DebugLog("Trading by image click: " + id, PAL.e_logLevel.VERBOSE);		
+        PAL.DebugLog("Trading by image click: " + id, PAL.e_logLevel.VERBOSE);
         doc.location.href = "ship2ship_transfer.php?playerid=" + id;
     };
 }
@@ -462,40 +466,45 @@ function ShowBuildingHP()
 
 function CountPilotsNav()
 {
-	if (!config.countPilots)
-		return;
+    if (!config.countPilots)
+        return;
 
-	var ships = doc.getElementById("otherships_content");
+    /* Not all actions (e.g. tank refill) refresh the otherships view, so we might trigger the PR callback on unchanged data. */
+    if (doc.getElementById("keyboard-script-pilot-count"))
+        return;
+
+    var ships = doc.getElementById("otherships_content");
 
     if (!ships)
-		return;
+        return;
 
     var tables = ships.getElementsByTagName('table');
 
     if (!tables)
-		return;
+        return;
 
-	var count = 0;
+    var count = 0;
 
-	for (var i = 0; i < tables.length; i++)
-	{
-		var links = tables[i].getElementsByTagName('a');
+    for (var i = 0; i < tables.length; i++)
+    {
+        var links = tables[i].getElementsByTagName('a');
 
-		for (var j = 0; j < links.length; j++)
-		{
-			if (links[j].href.indexOf("player") > 0)
-				count++;
-		}
-	}
+        for (var j = 0; j < links.length; j++)
+        {
+            if (links[j].href.indexOf("player") > 0)
+                count++;
+        }
+    }
 
-	var div = CreatePlainDiv("<strong>" + count + " Pilots</strong><br>", "95%");
+    var div = CreatePlainDiv("<strong>" + count + " Pilots</strong><br>", "95%");
+    div.id = "keyboard-script-pilot-count";
 
-	ships.insertBefore(div, ships.firstChild);
+    ships.insertBefore(div, ships.firstChild);
 }
 
 function CountPilotsMO()
 {
-	var ths = doc.getElementsByTagName('th');
+    var ths = doc.getElementsByTagName('th');
     var dataCells;
 
     for (var i = 0; i < ths.length; i++)
@@ -508,28 +517,28 @@ function CountPilotsMO()
     }
 
     if (!dataCells)
-		return;
+        return;
 
-	var count = 0;
+    var count = 0;
 
-	for (var i = 0; i < dataCells.length; i++)
-	{
-		var links = dataCells[i].getElementsByTagName('a');
+    for (var i = 0; i < dataCells.length; i++)
+    {
+        var links = dataCells[i].getElementsByTagName('a');
 
-		for (var j = 0; j < links.length; j++)
-		{
-			if (links[j].href.indexOf("player") > 0)
-				count++;
-		}
-	}
+        for (var j = 0; j < links.length; j++)
+        {
+            if (links[j].href.indexOf("player") > 0)
+                count++;
+        }
+    }
 
-	// #TODO how to display?
+    // #TODO how to display?
 }
 
 /* Set the combat rounds for this attack to the user-selected value. */
 function SetCombatRounds()
 {
-    doc.getElementsByTagName('select')[0].selectedIndex = (config.pql[ql_index].combatRounds - 1);   
+    doc.getElementsByTagName('select')[0].selectedIndex = (config.pql[ql_index].combatRounds - 1);
 }
 
 function SetCombatRoundsNPC()
@@ -958,11 +967,11 @@ function IsExcludedAlliance(pilot)
 /* Set up an object to contain information about a target. */
 function CreatePilotObj(pilotObj, scope)
 {
-	var links = scope.getElementsByTagName('a');
-	var match = null;
+    var links = scope.getElementsByTagName('a');
+    var match = null;
 
-	if (!links)
-		return;
+    if (!links)
+        return;
 
     pilotObj.priorityTarget = false;
     pilotObj.faction = GetFaction(scope);
@@ -974,13 +983,13 @@ function CreatePilotObj(pilotObj, scope)
         match = links[i].href.match(/javascript:scanId\((\d+)/);
 
         if (match)
-		{
-			pilotObj.id = match[1];
-			pilotObj.name = links[i].textContent;
-		}
+        {
+            pilotObj.id = match[1];
+            pilotObj.name = links[i].textContent;
+        }
 
         // Standard links are main.php?scan_details=<id>&scan_type=player
-		match = links[i].href.match(/scan_details\=(\d+)&scan_type\=player/);
+        match = links[i].href.match(/scan_details\=(\d+)&scan_type\=player/);
 
         if (match)
         {
@@ -988,16 +997,16 @@ function CreatePilotObj(pilotObj, scope)
             pilotObj.name = links[i].textContent;
         }
 
-		// Links on MOs are building.php?detail_type=player&detail_id=<id>
-		match = links[i].href.match(/detail_type\=player&detail_id\=(\d+)/);
+        // Links on MOs are building.php?detail_type=player&detail_id=<id>
+        match = links[i].href.match(/detail_type\=player&detail_id\=(\d+)/);
 
-		if (match)
-		{
-			pilotObj.id = match[1];
-			pilotObj.name = links[i].textContent;
-		}
+        if (match)
+        {
+            pilotObj.id = match[1];
+            pilotObj.name = links[i].textContent;
+        }
 
-		match = links[i].href.match(/alliance.php\?id\=(\d+)/);
+        match = links[i].href.match(/alliance.php\?id\=(\d+)/);
 
         if (match)
             pilotObj.alliance = match[1];
@@ -1061,172 +1070,172 @@ function ScanForTargets(scope, ignorePriorityTargets)
         links = scope[i].getElementsByTagName('a');
 
         if (links.length == 0)
-			continue
+            continue
 
-		/* Don't target NPCs like fuel tankers, detail_type is for buildings, scan_type is for the nav. */
-		if (links[0].href.indexOf("player") < 0)
-			continue;
+        /* Don't target NPCs like fuel tankers, detail_type is for buildings, scan_type is for the nav. */
+        if (links[0].href.indexOf("player") < 0)
+            continue;
 
-		CreatePilotObj(pilotObj, scope[i]);
+        CreatePilotObj(pilotObj, scope[i]);
 
-		PAL.DebugLog(">> PILOT : " + pilotObj.name + ", id: " + pilotObj.id + ", alliance: " + pilotObj.alliance + ",faction: " + pilotObj.faction +", priorityTarget: " + pilotObj.priorityTarget, PAL.e_logLevel.VERBOSE);
+        PAL.DebugLog(">> PILOT : " + pilotObj.name + ", id: " + pilotObj.id + ", alliance: " + pilotObj.alliance + ",faction: " + pilotObj.faction +", priorityTarget: " + pilotObj.priorityTarget, PAL.e_logLevel.VERBOSE);
 
-		if ((pilotObj.name === undefined) || (pilotObj.id === undefined) || (pilotObj.alliance === undefined) || (pilotObj.faction === undefined))
-		{
-			PAL.DebugLog("Not targeting pilot, unable to retrieve enough data to make a targeting decision!", PAL.e_logLevel.VERBOSE);
-			continue;
-		}
+        if ((pilotObj.name === undefined) || (pilotObj.id === undefined) || (pilotObj.alliance === undefined) || (pilotObj.faction === undefined))
+        {
+            PAL.DebugLog("Not targeting pilot, unable to retrieve enough data to make a targeting decision!", PAL.e_logLevel.VERBOSE);
+            continue;
+        }
 
-		if (IsNewbie(pilotObj.id))
-			continue;
+        if (IsNewbie(pilotObj.id))
+            continue;
 
-		/* Prioritise Target if one is set. */
-		if (!ignorePriorityTargets)
-		{
-			for (var j = 0; j < config.arrPriorityTargets.length; j++)
-			{
-				if (config.arrPriorityTargets[j])
-				{
-					if (isNumber(config.arrPriorityTargets[j]))
-					{
-						if (config.arrPriorityTargets[j] === pilotObj.id)
-						{
-							pilotObj.priorityTarget = true;
-							pilots.push(pilotObj);
-							break;
-						}
-					}
-					else if (config.arrPriorityTargets[j].toUpperCase() === pilotObj.name.toUpperCase())
-					{
-						pilotObj.priorityTarget = true;
-						pilots.push(pilotObj);
-						break;
-					}
-				}
-			}
+        /* Prioritise Target if one is set. */
+        if (!ignorePriorityTargets)
+        {
+            for (var j = 0; j < config.arrPriorityTargets.length; j++)
+            {
+                if (config.arrPriorityTargets[j])
+                {
+                    if (isNumber(config.arrPriorityTargets[j]))
+                    {
+                        if (config.arrPriorityTargets[j] === pilotObj.id)
+                        {
+                            pilotObj.priorityTarget = true;
+                            pilots.push(pilotObj);
+                            break;
+                        }
+                    }
+                    else if (config.arrPriorityTargets[j].toUpperCase() === pilotObj.name.toUpperCase())
+                    {
+                        pilotObj.priorityTarget = true;
+                        pilots.push(pilotObj);
+                        break;
+                    }
+                }
+            }
 
-			/* This value is only set if the target was found to be a priority */
-			if (pilotObj.priorityTarget === true)
-			{
-				PAL.DebugLog("Priority Target Locked: " + pilotObj.name, PAL.e_logLevel.VERBOSE);
-				continue;
-			}
-		}
+            /* This value is only set if the target was found to be a priority */
+            if (pilotObj.priorityTarget === true)
+            {
+                PAL.DebugLog("Priority Target Locked: " + pilotObj.name, PAL.e_logLevel.VERBOSE);
+                continue;
+            }
+        }
 
-		/*
-		 * Range excludes are treated as a special case, we want to ignore whole sets of ships if possible for MO defence
-		 */
-		shipName = null;
-		if (on_nav && (config.useRangeExclude || config.useRangeInclude))
-		{
-			shipName = scope[i].rows[0].cells[0].style.backgroundImage.split('/');
-			shipName = stripPaintJobs(shipName[shipName.length - 1].split('.')[0]);
+        /*
+         * Range excludes are treated as a special case, we want to ignore whole sets of ships if possible for MO defence
+         */
+        shipName = null;
+        if (on_nav && (config.useRangeExclude || config.useRangeInclude))
+        {
+            shipName = scope[i].rows[0].cells[0].style.backgroundImage.split('/');
+            shipName = stripPaintJobs(shipName[shipName.length - 1].split('.')[0]);
 
-			PAL.DebugLog("Shipname for " + pilotObj.name + ": " + shipName, PAL.e_logLevel.VERBOSE);
+            PAL.DebugLog("Shipname for " + pilotObj.name + ": " + shipName, PAL.e_logLevel.VERBOSE);
 
-			// Exclude class/sizes
-			if (config.useRangeExclude)
-			{
-				if (config.pql[ql_index].excludeSizes)
-				{
-					if (config.pql[ql_index].excludeSizes.length === 2)
-					{
-						if (shipInSizeRange(shipName, config.pql[ql_index].excludeSizes))
-						{
-							PAL.DebugLog("Excluded by size using excludeSizes: " + config.pql[ql_index].excludeSizes, PAL.e_logLevel.VERBOSE);
-							continue;
-						}
-					}
-				}
-				if (config.pql[ql_index].excludeClasses)
-				{
-					if (shipInClassRange(shipName, config.pql[ql_index].excludeClasses))
-					{
-						PAL.DebugLog("Excluded by class using excludeClasses: " + config.pql[ql_index].excludeClasses, PAL.e_logLevel.VERBOSE);
-						continue;
-					}
-				}
-			}
-		}
+            // Exclude class/sizes
+            if (config.useRangeExclude)
+            {
+                if (config.pql[ql_index].excludeSizes)
+                {
+                    if (config.pql[ql_index].excludeSizes.length === 2)
+                    {
+                        if (shipInSizeRange(shipName, config.pql[ql_index].excludeSizes))
+                        {
+                            PAL.DebugLog("Excluded by size using excludeSizes: " + config.pql[ql_index].excludeSizes, PAL.e_logLevel.VERBOSE);
+                            continue;
+                        }
+                    }
+                }
+                if (config.pql[ql_index].excludeClasses)
+                {
+                    if (shipInClassRange(shipName, config.pql[ql_index].excludeClasses))
+                    {
+                        PAL.DebugLog("Excluded by class using excludeClasses: " + config.pql[ql_index].excludeClasses, PAL.e_logLevel.VERBOSE);
+                        continue;
+                    }
+                }
+            }
+        }
 
-		/*
-		 * Check if Individual is included/excluded
-		 */
-		if (IsExcludedIndividual(pilotObj))
-		{
-			PAL.DebugLog("Pilot excluded by individuals portion of QL: " + config.pql[ql_index].excludeIndividuals, PAL.e_logLevel.VERBOSE);
-			continue;
-		}
-		else if (contains(pilotObj.id, config.pql[ql_index].includeIndividuals))
-		{
-			PAL.DebugLog("Including pilot by id from " + config.pql[ql_index].includeIndividuals, PAL.e_logLevel.VERBOSE);
-			pilots.push(pilotObj);
-			continue;
-		}
+        /*
+         * Check if Individual is included/excluded
+         */
+        if (IsExcludedIndividual(pilotObj))
+        {
+            PAL.DebugLog("Pilot excluded by individuals portion of QL: " + config.pql[ql_index].excludeIndividuals, PAL.e_logLevel.VERBOSE);
+            continue;
+        }
+        else if (contains(pilotObj.id, config.pql[ql_index].includeIndividuals))
+        {
+            PAL.DebugLog("Including pilot by id from " + config.pql[ql_index].includeIndividuals, PAL.e_logLevel.VERBOSE);
+            pilots.push(pilotObj);
+            continue;
+        }
 
-		 /*
-		  * Check if alliance is included/excluded
-		  */
-		if (IsExcludedAlliance(pilotObj))
-		{
-			PAL.DebugLog("Pilot excluded by alliance portion of QL: " + config.pql[ql_index].excludeAlliances, PAL.e_logLevel.VERBOSE);
-			continue;
-		}
-		else if (links.length > 1)
-		{
-			if (contains(pilotObj.alliance, config.pql[ql_index].includeAlliances))
-			{
-				PAL.DebugLog("Pilot included by alliance (" + pilotObj.alliance + "/" + config.pql[ql_index].includeAlliances + ")", PAL.e_logLevel.VERBOSE);
-				pilots.push(pilotObj);
-				continue;
-			}
-		}
+         /*
+          * Check if alliance is included/excluded
+          */
+        if (IsExcludedAlliance(pilotObj))
+        {
+            PAL.DebugLog("Pilot excluded by alliance portion of QL: " + config.pql[ql_index].excludeAlliances, PAL.e_logLevel.VERBOSE);
+            continue;
+        }
+        else if (links.length > 1)
+        {
+            if (contains(pilotObj.alliance, config.pql[ql_index].includeAlliances))
+            {
+                PAL.DebugLog("Pilot included by alliance (" + pilotObj.alliance + "/" + config.pql[ql_index].includeAlliances + ")", PAL.e_logLevel.VERBOSE);
+                pilots.push(pilotObj);
+                continue;
+            }
+        }
 
-		/*
-		 * Check if faction is included/excluded
-		 */
-		if ((config.pql[ql_index].excludeFactions.indexOf(pilotObj.faction) >= 0) && (config.useExclude))
-		{
-			PAL.DebugLog("Pilot excluded by faction (" + pilotObj.faction + "/" + config.pql[ql_index].excludeFactions + ")", PAL.e_logLevel.VERBOSE);
-			continue;
-		}
-		else if (config.pql[ql_index].includeFactions.indexOf(pilotObj.faction) >= 0)
-		{
-			PAL.DebugLog("Pilot included by faction (" + pilotObj.faction + "/" + config.pql[ql_index].includeFactions + ")", PAL.e_logLevel.VERBOSE);
-			pilots.push(pilotObj);
-			continue;
-		}
+        /*
+         * Check if faction is included/excluded
+         */
+        if ((config.pql[ql_index].excludeFactions.indexOf(pilotObj.faction) >= 0) && (config.useExclude))
+        {
+            PAL.DebugLog("Pilot excluded by faction (" + pilotObj.faction + "/" + config.pql[ql_index].excludeFactions + ")", PAL.e_logLevel.VERBOSE);
+            continue;
+        }
+        else if (config.pql[ql_index].includeFactions.indexOf(pilotObj.faction) >= 0)
+        {
+            PAL.DebugLog("Pilot included by faction (" + pilotObj.faction + "/" + config.pql[ql_index].includeFactions + ")", PAL.e_logLevel.VERBOSE);
+            pilots.push(pilotObj);
+            continue;
+        }
 
-		/*
-		 * If none of the above exclude or inclulde the ship, check if we want to shoot them anyway for their size/class.
-		 */
-		if (shipName)
-		{
-			// Include by size/class
-			if (config.pql[ql_index].includeSizes && config.useRangeInclude)
-			{
-				if (config.pql[ql_index].includeSizes.length === 2)
-				{
-					if (shipInSizeRange(shipName, config.pql[ql_index].includeSizes))
-					{
-						PAL.DebugLog("Included by ship size: " + config.pql[ql_index].includeSizes, PAL.e_logLevel.VERBOSE);
-						pilots.push(pilotObj);
-						continue;
-					}
-				}
-			}
-			if (config.pql[ql_index].includeClasses && config.useRangeInclude)
-			{
-				if (shipInClassRange(shipName, config.pql[ql_index].includeClasses))
-				{
-					PAL.DebugLog("Included by ship class: " + config.pql[ql_index].includeClasses, PAL.e_logLevel.VERBOSE);
-					pilots.push(pilotObj);
-					continue;
-				}
-			}
-		}
+        /*
+         * If none of the above exclude or inclulde the ship, check if we want to shoot them anyway for their size/class.
+         */
+        if (shipName)
+        {
+            // Include by size/class
+            if (config.pql[ql_index].includeSizes && config.useRangeInclude)
+            {
+                if (config.pql[ql_index].includeSizes.length === 2)
+                {
+                    if (shipInSizeRange(shipName, config.pql[ql_index].includeSizes))
+                    {
+                        PAL.DebugLog("Included by ship size: " + config.pql[ql_index].includeSizes, PAL.e_logLevel.VERBOSE);
+                        pilots.push(pilotObj);
+                        continue;
+                    }
+                }
+            }
+            if (config.pql[ql_index].includeClasses && config.useRangeInclude)
+            {
+                if (shipInClassRange(shipName, config.pql[ql_index].includeClasses))
+                {
+                    PAL.DebugLog("Included by ship class: " + config.pql[ql_index].includeClasses, PAL.e_logLevel.VERBOSE);
+                    pilots.push(pilotObj);
+                    continue;
+                }
+            }
+        }
 
-		PAL.DebugLog("Did nothing for pilot: " + pilotObj.name, PAL.e_logLevel.VERBOSE);
+        PAL.DebugLog("Did nothing for pilot: " + pilotObj.name, PAL.e_logLevel.VERBOSE);
     }
 
     /* If we had a priority target, but they're not available for targeting, then rescan without looking for them. */
@@ -1238,7 +1247,7 @@ function ScanForTargets(scope, ignorePriorityTargets)
 
 function SortPilotArray()
 {
-	PAL.DebugLog("Sorting pilot array (" + pilots.length + " targets)", PAL.e_logLevel.VERBOSE);
+    PAL.DebugLog("Sorting pilot array (" + pilots.length + " targets)", PAL.e_logLevel.VERBOSE);
 
     /* If we have some priority targets from our scan, then sort them to the front of the array. */
     if ((pilots.length > 1) && (config.arrPriorityTargets.length > 0))
@@ -1374,8 +1383,8 @@ function stripPaintJobs(shipName)
 /* Determines how many bots to use when on combat screen. */
 function UseBots()
 {
-	if (!config.calculateBotUsage)
-		return;
+    if (!config.calculateBotUsage)
+        return;
 
     var currentArmor = GetCurrentArmorValue();
     var botInput = SearchForTagByValue('input', 'resid', '8');
@@ -1482,8 +1491,8 @@ function SetAmbushRP()
 
 function CheckAP()
 {
-	if (!config.lowAPWarning)
-		return;
+    if (!config.lowAPWarning)
+        return;
 
     var boldTags = doc.getElementsByTagName('b');
     var found = false;
@@ -1512,7 +1521,7 @@ function CheckAP()
 function CheckAPNav()
 {
     if (!config.lowAPWarning)
-		return;
+        return;
 
     var apSpan = doc.getElementById('apsleft');
 
@@ -1570,7 +1579,7 @@ function calculateBotRequirement(currentArmor)
 function InjectRepairButtons()
 {
     if (!config.useFastRepair)
-		return;
+        return;
 
     var sb = doc.getElementById('aCmdStarbase');
     var planet = doc.getElementById('aCmdPlanet');
@@ -1578,9 +1587,9 @@ function InjectRepairButtons()
     if ((sb) || (planet))
     {
         var target = doc.getElementById('yourship_content');
-        if (target && (!doc.getElementById('fastRepair')))
+        if (target && (!doc.getElementById('keyboard-script-fast-repair')))
         {
-            var repairEquipmentForm = '<form id="fastRepair" style="display:inline;" method="post" action="ship_equipment.php"><input type="hidden" value="regenerateall" name="action"><input type="hidden" value="repair" name="sort"><input type="submit" value="Ship" style="width:55px;margin:0 5px;"></form>';
+            var repairEquipmentForm = '<form id="keyboard-script-fast-repair" style="display:inline;" method="post" action="ship_equipment.php"><input type="hidden" value="regenerateall" name="action"><input type="hidden" value="repair" name="sort"><input type="submit" value="Ship" style="width:55px;margin:0 5px;"></form>';
             var repairShipForm = '<form style="display:inline;" method="post" action="ship_equipment.php"><input type="hidden" value="repairall" name="action"><input type="hidden" value="repair" name="sort"><input type="submit" value="Equipment" style="width:80px;margin:0 5px;"></form>';
 
             target.appendChild(CreatePlainDiv("<strong>Fast Repair:</strong><br>" + repairEquipmentForm + repairShipForm, "95%"));
@@ -1853,10 +1862,10 @@ function InjectOptionsForm()
             ["Add agi-boost button to the nav screen","useFastAB"],
             ["Add timebomb buttons to the nav screen", "useFastTBDeploy"],
             ["Add OC/BAL/DC buttons to the nav screen", "useFastCombatModes"],
-            ["Show building HP number when attacking (BROKEN)", "showBuildingHP"],            
-			["Display number of pilots on current tile", "countPilots"],
-			[],
-			["Action when clicking ship image on Nav:", "quickMouse", [0,1,2], ["Default", "Attack Pilot", "Trade with Pilot"]],
+            ["Show building HP number when attacking (BROKEN)", "showBuildingHP"],
+            ["Display number of pilots on current tile", "countPilots"],
+            [],
+            ["Action when clicking ship image on Nav:", "quickMouse", [0,1,2], ["Default", "Attack Pilot", "Trade with Pilot"]],
             [],
             ["Show low AP warning when below this many AP:", "lowAPThreshold"],
             []
@@ -2014,20 +2023,20 @@ function upgrade_4_1_to_4_2()
 
 function upgrade_4_2_to_5()
 {
-	config.showBuildingHP = false;
-	config.version = 5;
-	PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
+    config.showBuildingHP = false;
+    config.version = 5;
+    PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
 }
 
 function upgrade_5_to_6()
 {
-	config.countPilots = false;
-	
-	if (config.quickMouse)
-		config.quickMouse = ACTION_ATTACK;
-	else
-		config.quickMouse = ACTION_DEFAULT;
-	
-	config.version = 6;
-	PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
+    config.countPilots = false;
+
+    if (config.quickMouse)
+        config.quickMouse = ACTION_ATTACK;
+    else
+        config.quickMouse = ACTION_DEFAULT;
+
+    config.version = 6;
+    PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
 }
