@@ -751,10 +751,7 @@ function KeypressCallback(e)
                 UseBotsNav();
         break;
 
-        case config.key_return_nav:
-            if (url.indexOf('entersb=1') >= 0)
-                doc.location.href = "main.php?exitsb=1";
-            else
+        case config.key_return_nav:            
                 doc.location.href = "main.php";
         break;
 
