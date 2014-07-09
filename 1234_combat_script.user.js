@@ -1238,7 +1238,7 @@ function ScanForTargets(scope, ignorePriorityTargets)
     /* If we had a priority target, but they're not available for targeting, then rescan without looking for them. */
     if ((!ignorePriorityTargets) && (((config.stopOnFirstHostile === true) && (pilots.length === 0))))
     {
-        ScanForTargets(scope, pilotObjFunc, true);
+        ScanForTargets(scope, true);
     }
 }
 
