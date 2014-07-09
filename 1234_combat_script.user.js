@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         9
+// @version         10
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         http://www.grandunifyingalliance.com/gm/pal/0.8/pal.js
 // @author          Richard Broker (Beigeman)
