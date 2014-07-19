@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         11
+// @version         12
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         http://www.grandunifyingalliance.com/gm/pal/1/pal.js
 // @author          Richard Broker (Beigeman)
@@ -21,7 +21,7 @@
 var PAL = PardusMonkey("Beige's Combat Script", "PAL52028fe910329");
 var doc = document;
 var url = doc.location.href; // Don't move this down in the code!
-var CONFIG_VERSION = 6;    // Only update this if the config changes, or users will lose their config.
+var CONFIG_VERSION = 7;    // Only update this if the config changes, or users will lose their config.
 
 /*
  * Localstorage value keys. Used to load script configuration.
@@ -43,6 +43,7 @@ var on_dock = false;
 var on_as = false;
 var pilots = [];
 var pilot_index = 0;
+var page_time = null;
 var ql_index = parseInt(PAL.GetValue("ql_index", 0, PAL.e_storageType.SESSION), 10);
 var master_div = doc.createElement('div'); // Create this here, because cloning elements is faster than creating them.
 
@@ -129,15 +130,22 @@ if (config !== null)
             upgrade_4_1_to_4_2();
             upgrade_4_2_to_5();
             upgrade_5_to_6();
+            upgrade_6_to_7();
         }
         else if (config.version === 4.2)
         {
             upgrade_4_2_to_5();
             upgrade_5_to_6();
+            upgrade_6_to_7();
         }
         else if (config.version === 5)
         {
             upgrade_5_to_6();
+            upgrade_6_to_7();
+        }
+        else if (config.version === 6)
+        {
+            upgrade_6_to_7();
         }
         else
         {
@@ -169,6 +177,8 @@ if (config.universeEnabled)
     if (PAL.PageIs(PAL.e_page.SHIP_2_SHIP))
     {
         in_combat = true;
+        
+        ShowTimeSingePageLoad();
 
         GetCurrentCombatModePvP();
         SetCombatRounds();
@@ -193,7 +203,8 @@ if (config.universeEnabled)
     else if (PAL.PageIs(PAL.e_page.BUILDING))
     {
         on_building = true;
-
+        
+        ShowTimeSingePageLoad();
         CheckAP();
 
         if (config.showBuildingHP)
@@ -277,7 +288,8 @@ function ApplyDefaultConfig()
     config.lowAPWarning = true;        // use custom "low AP" warning level
     config.stopOnFirstHostile = true;  // Stop searching for targets after the first QL hit.
     config.showBuildingHP = false;     // Determine building health and display it as a number (BROKEN).
-    config.enableDebugLogging = false; // Indicates whether to use verbose or minimal logging.
+    config.showTimeSincePageLoad = true; // Show timer indicating how long it has been since the page was loaded.
+    config.enableDebugLogging = false; // Indicates whether to use verbose or minimal logging.    
     config.quickMouse = ACTION_DEFAULT; // Defines action performed when clicking ship image on Nav. 0: Default,  1: Attack, 2: Trade
     config.countPilots = false;        // Enable counting the number of pilots on the current tile.
     config.key_retreat = DEFAULT_KEY_RETREAT;
@@ -319,11 +331,12 @@ function ApplyDefaultConfig()
 function CommonNav()
 {
     on_nav = true;
-
+    
+    ShowTimeSingePageLoad();
     CheckAPNav();
     InjectRepairButtons();
     AddQuickMouseCallbacks();
-    CountPilotsNav();
+    CountPilotsNav();    
 }
 
 /* Function by Rhindon. Checks all missiles on combat screen. */
@@ -1350,10 +1363,9 @@ function ReloadFrame()
     else
     {
         // Don't repeat drug or bot use when reloading page.
-        if (url.indexOf("?use") < 0)
-        {
+        if (url.indexOf("?use") < 0)        
             url = url.substring(0, url.indexOf("?"));
-        }
+            
         doc.location.href = url;
     }
 }
@@ -1361,10 +1373,9 @@ function ReloadFrame()
 /* Determine whether a value exists within an array. */
 function contains(value, array)
 {
-    if (array.indexOf(value) >= 0)
-    {
+    if (array.indexOf(value) >= 0)   
         return true;
-    }
+
     return false;
 }
 
@@ -1592,6 +1603,51 @@ function InjectRepairButtons()
             target.appendChild(CreatePlainDiv("<strong>Fast Repair:</strong><br>" + repairEquipmentForm + repairShipForm, "95%"));
         }
     }
+}
+
+function ShowTimeSingePageLoad()
+{
+    if (!config.showTimeSincePageLoad)
+        return;
+        
+    var previous = doc.getElementById('keyboard-script-page-time-elapsed-div');
+    
+    if (previous)
+        previous.parentNode.removeChild(previous);
+        
+    page_time = Date.now();
+    setTimeout(TimeUpdateCallback, 100);
+    
+    var div = CreatePlainDiv('<font color="#FFA500">0.0s', "75px");
+    div.position = "fixed";
+    div.bottom = "0px";
+    div.id = "keyboard-script-page-time-elapsed-div";
+    
+    doc.body.appendChild(div);
+}
+
+function TimeUpdateCallback()
+{
+    var div = doc.getElementById('keyboard-script-page-time-elapsed-div');
+    
+    if (!div)
+        return;
+        
+    var elapsed = Date.now() - page_time;    
+    var colour = "#FFA500";
+    
+    if (elapsed > 2000)
+    {
+        div.innerHTML = '<font color="red">>2s';
+        return;
+    }
+        
+    if (elapsed > 1000)
+        colour = "#00CC00";
+        
+    div.innerHTML = '<font color="' + colour + '">' + (elapsed / 1000).toFixed(1) + 's';
+    
+    setTimeout(TimeUpdateCallback, 100);
 }
 
 /* Adds OC/BAL/DC Buttons to the nav screen. */
@@ -1861,6 +1917,7 @@ function InjectOptionsForm()
             ["Add OC/BAL/DC buttons to the nav screen", "useFastCombatModes"],
             ["Show building HP number when attacking (BROKEN)", "showBuildingHP"],
             ["Display number of pilots on current tile", "countPilots"],
+            ["Show time since last page load", "showTimeSincePageLoad"],
             [],
             ["Action when clicking ship image on Nav:", "quickMouse", [0,1,2], ["Default", "Attack Pilot", "Trade with Pilot"]],
             [],
@@ -2036,4 +2093,9 @@ function upgrade_5_to_6()
 
     config.version = 6;
     PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
+}
+
+function upgrade_6_to_7()
+{
+    config.showTimeSincePageLoad = true;
 }
