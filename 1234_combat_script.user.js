@@ -43,7 +43,7 @@ var on_dock = false;
 var on_as = false;
 var pilots = [];
 var pilot_index = 0;
-var page_time = null;
+var load_time = 0;
 var ql_index = parseInt(PAL.GetValue("ql_index", 0, PAL.e_storageType.SESSION), 10);
 var master_div = doc.createElement('div'); // Create this here, because cloning elements is faster than creating them.
 
@@ -1615,10 +1615,10 @@ function ShowTimeSingePageLoad()
     if (previous)
         previous.parentNode.removeChild(previous);
         
-    page_time = Date.now();
+    load_time = Date.now();
     setTimeout(TimeUpdateCallback, 100);
     
-    var div = CreatePlainDiv('<font color="#FFA500">0.0s', "75px");
+    var div = CreatePlainDiv('<font color="#FFA500">&nbsp;&nbsp;0.0s', "75px");
     div.position = "fixed";
     div.bottom = "0px";
     div.id = "keyboard-script-page-time-elapsed-div";
@@ -1633,19 +1633,19 @@ function TimeUpdateCallback()
     if (!div)
         return;
         
-    var elapsed = Date.now() - page_time;    
+    var elapsed = Date.now() - load_time;    
     var colour = "#FFA500";
     
     if (elapsed > 2000)
     {
-        div.innerHTML = '<font color="red">>2s';
+        div.innerHTML = '<font color="red">>&nbsp;2.0s';
         return;
     }
         
-    if (elapsed > 1000)
+    if ((elapsed > 900) && (elapsed < 1500))
         colour = "#00CC00";
         
-    div.innerHTML = '<font color="' + colour + '">' + (elapsed / 1000).toFixed(1) + 's';
+    div.innerHTML = '<font color="' + colour + '">&nbsp;&nbsp;' + (elapsed / 1000).toFixed(1) + 's';
     
     setTimeout(TimeUpdateCallback, 100);
 }
@@ -1917,7 +1917,7 @@ function InjectOptionsForm()
             ["Add OC/BAL/DC buttons to the nav screen", "useFastCombatModes"],
             ["Show building HP number when attacking (BROKEN)", "showBuildingHP"],
             ["Display number of pilots on current tile", "countPilots"],
-            ["Show time since last page load", "showTimeSincePageLoad"],
+            ["Show time since last page load on nav/building/PvP", "showTimeSincePageLoad"],
             [],
             ["Action when clicking ship image on Nav:", "quickMouse", [0,1,2], ["Default", "Attack Pilot", "Trade with Pilot"]],
             [],
@@ -2098,4 +2098,6 @@ function upgrade_5_to_6()
 function upgrade_6_to_7()
 {
     config.showTimeSincePageLoad = true;
+    config.version = 7;
+    PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
 }
