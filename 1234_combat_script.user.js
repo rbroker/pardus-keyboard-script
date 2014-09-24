@@ -206,6 +206,7 @@ if (config.universeEnabled)
         
         ShowTimeSingePageLoad();
         CheckAP();
+        CountPilotsMO();
 
         if (config.showBuildingHP)
             ShowBuildingHP();
@@ -292,6 +293,7 @@ function ApplyDefaultConfig()
     config.enableDebugLogging = false; // Indicates whether to use verbose or minimal logging.    
     config.quickMouse = ACTION_DEFAULT; // Defines action performed when clicking ship image on Nav. 0: Default,  1: Attack, 2: Trade
     config.countPilots = false;        // Enable counting the number of pilots on the current tile.
+    config.disableSpacebarScroll = false; // Disable scrolling the page when hitting space bar. Use if you have key bound to space bar.
     config.key_retreat = DEFAULT_KEY_RETREAT;
     config.key_return_nav = DEFAULT_KEY_RETURN_NAV;
     config.key_ambush = DEFAULT_KEY_AMBUSH;
@@ -517,19 +519,24 @@ function CountPilotsNav()
 
 function CountPilotsMO()
 {
+    if (!config.countPilots)
+        return;
+        
     var ths = doc.getElementsByTagName('th');
     var dataCells;
+    var header;
 
     for (var i = 0; i < ths.length; i++)
     {
         if (ths[i].textContent === "Other Ships")
         {
+            header = ths[i];
             dataCells = ths[i].parentNode.parentNode.getElementsByTagName('td');
             break;
         }
     }
 
-    if (!dataCells)
+    if ((!dataCells) || (!header))
         return;
 
     var count = 0;
@@ -545,7 +552,7 @@ function CountPilotsMO()
         }
     }
 
-    // #TODO how to display?
+    header.textContent = "Other Ships: " + count;
 }
 
 /* Set the combat rounds for this attack to the user-selected value. */
@@ -596,6 +603,9 @@ function KeypressCallback(e)
     var cha = String.fromCharCode(e.which).toLowerCase();
 
     PAL.DebugLog("Keypress: " + cha, PAL.e_logLevel.VERBOSE);
+    
+    if ((cha == ' ') && config.disableSpacebarScroll)
+        e.preventDefault();
 
     switch (cha)
     {
@@ -1918,8 +1928,9 @@ function InjectOptionsForm()
             ["Show building HP number when attacking (BROKEN)", "showBuildingHP"],
             ["Display number of pilots on current tile", "countPilots"],
             ["Show time since last page load on nav/building/PvP", "showTimeSincePageLoad"],
+            ["Disable page scroll when pressing space bar", "disableSpacebarScroll"],
             [],
-            ["Action when clicking ship image on Nav:", "quickMouse", [0,1,2], ["Default", "Attack Pilot", "Trade with Pilot"]],
+            ["Action when clicking ship image on Nav:", "quickMouse", [0,1,2], ["Default (view profile)", "Attack Pilot", "Trade with Pilot"]],
             [],
             ["Show low AP warning when below this many AP:", "lowAPThreshold"],
             []
@@ -2098,6 +2109,7 @@ function upgrade_5_to_6()
 function upgrade_6_to_7()
 {
     config.showTimeSincePageLoad = true;
+    config.disableSpacebarScroll = false;
     config.version = 7;
     PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
 }
