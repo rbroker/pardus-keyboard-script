@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         12
+// @version         13
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         http://www.grandunifyingalliance.com/gm/pal/1/pal.js
 // @author          Richard Broker (Beigeman)
@@ -289,7 +289,7 @@ function ApplyDefaultConfig()
     config.lowAPWarning = true;        // use custom "low AP" warning level
     config.stopOnFirstHostile = true;  // Stop searching for targets after the first QL hit.
     config.showBuildingHP = false;     // Determine building health and display it as a number (BROKEN).
-    config.showTimeSincePageLoad = true; // Show timer indicating how long it has been since the page was loaded.
+    config.showTimeSincePageLoad = false; // Show timer indicating how long it has been since the page was loaded.
     config.enableDebugLogging = false; // Indicates whether to use verbose or minimal logging.    
     config.quickMouse = ACTION_DEFAULT; // Defines action performed when clicking ship image on Nav. 0: Default,  1: Attack, 2: Trade
     config.countPilots = false;        // Enable counting the number of pilots on the current tile.
@@ -2108,7 +2108,7 @@ function upgrade_5_to_6()
 
 function upgrade_6_to_7()
 {
-    config.showTimeSincePageLoad = true;
+    config.showTimeSincePageLoad = false;
     config.disableSpacebarScroll = false;
     config.version = 7;
     PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
