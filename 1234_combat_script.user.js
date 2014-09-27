@@ -107,7 +107,7 @@ var DEFAULT_KEY_AUTO_TRADE = ' ';
  * Ship data, name to size/class mappings.
  * Ship names here should match the name of the ship in the image pack!
  */
-var SHIP_DATA = { "sabre":{size:12,skulls:1},"rustclaw":{size:63,skulls:0},"interceptor":{size:8,skulls:6},"lanner_mini":{size:45,skulls:0},"harrier":{size:56,skulls:2},"mercury":{size:27,skulls:5},"hercules":{size:66,skulls:1},"lanner":{size:98,skulls:0},"hawk":{size:33,skulls:6},"gargantua":{size:79,skulls:4},"behemoth":{size:206,skulls:0},"liberator":{size:82,skulls:4},"leviathan":{size:408,skulls:0},"wasp":{size:14,skulls:4},"adder":{size:18,skulls:1},"thunderbird":{size:29,skulls:2},"viper_defence_craft":{size:10,skulls:6},"babel_transporter":{size:92,skulls:0},"piranha":{size:24,skulls:6},"nighthawk":{size:29,skulls:6},"nighthawk_deluxe":{size:36,skulls:6},"mantis":{size:134,skulls:2},"extender":{size:104,skulls:0},"gauntlet":{size:68,skulls:6},"doomstar":{size:101,skulls:5},"war_nova":{size:250,skulls:5},"ficon":{size:17,skulls:4},"tyrant":{size:74,skulls:0},"spectre":{size:34,skulls:1},"shadow_stealth_craft":{size:7,skulls:6},"venom":{size:46,skulls:4},"constrictor":{size:131,skulls:0},"phantom_advanced_stealth_craft":{size:23,skulls:6},"dominator":{size:88,skulls:5},"boa_ultimate_carrier":{size:182,skulls:0},"mooncrusher":{size:142,skulls:3},"rustfire":{size:60,skulls:2},"marauder":{size:14,skulls:6},"junkeriv":{size:52,skulls:0},"slider":{size:38,skulls:3},"elpadre":{size:140,skulls:0},"chitin":{size:40,skulls:5},"horpor":{size:78,skulls:4},"scorpion":{size:84,skulls:5},"rover":{size:20,skulls:5},"reaper":{size:50,skulls:6},"blood_lanner":{size:98,skulls:3},"sudden_death":{size:75,skulls:6},"harvester":{size:59,skulls:5},"trident":{size:26,skulls:5},"celeus":{size:90,skulls:0},"pantagruel":{size:39,skulls:5},"vulcan":{size:30,skulls:4},"nano":{size:9,skulls:6},"liberator_eps":{size:85,skulls:4} };
+var SHIP_DATA = { "sabre":{size:12,skulls:1},"rustclaw":{size:63,skulls:0},"interceptor":{size:8,skulls:6},"lanner_mini":{size:45,skulls:0},"harrier":{size:56,skulls:2},"mercury":{size:27,skulls:5},"hercules":{size:66,skulls:1},"lanner":{size:98,skulls:0},"hawk":{size:33,skulls:6},"gargantua":{size:79,skulls:4},"behemoth":{size:206,skulls:0},"liberator":{size:82,skulls:4},"leviathan":{size:408,skulls:0},"wasp":{size:14,skulls:4},"adder":{size:18,skulls:1},"thunderbird":{size:29,skulls:2},"viper_defence_craft":{size:10,skulls:6},"babel_transporter":{size:92,skulls:0},"piranha":{size:24,skulls:6},"nighthawk":{size:29,skulls:6},"nighthawk_deluxe":{size:36,skulls:6},"mantis":{size:134,skulls:2},"extender":{size:104,skulls:0},"gauntlet":{size:68,skulls:6},"doomstar":{size:101,skulls:5},"war_nova":{size:250,skulls:5},"ficon":{size:17,skulls:4},"tyrant":{size:74,skulls:0},"spectre":{size:34,skulls:1},"shadow_stealth_craft":{size:7,skulls:6},"venom":{size:46,skulls:4},"constrictor":{size:131,skulls:0},"phantom_advanced_stealth_craft":{size:23,skulls:6},"dominator":{size:88,skulls:5},"boa_ultimate_carrier":{size:182,skulls:0},"mooncrusher":{size:142,skulls:3},"rustfire":{size:60,skulls:2},"marauder":{size:14,skulls:6},"junkeriv":{size:52,skulls:0},"slider":{size:38,skulls:3},"elpadre":{size:140,skulls:0},"chitin":{size:40,skulls:5},"horpor":{size:78,skulls:4},"scorpion":{size:84,skulls:5},"rover":{size:20,skulls:5},"reaper":{size:50,skulls:6},"blood_lanner":{size:98,skulls:3},"sudden_death":{size:75,skulls:6},"harvester":{size:59,skulls:5},"trident":{size:26,skulls:5},"celeus":{size:90,skulls:0},"pantagruel":{size:39,skulls:5},"vulcan":{size:30,skulls:4},"nano":{size:9,skulls:6},"liberator_eps":{size:85,skulls:4},"bopx":{size:42,skulls:6}};
 
 /* Action definitions for clicking ship images on nav. */
 var ACTION_DEFAULT = 0;
@@ -192,9 +192,7 @@ if (config.universeEnabled)
     {
         CommonNav();
 
-        if (config.useFastCombatModes)
-            InjectCombatModeButtons();
-
+        InjectCombatModeButtons();
         InjectAgiBoostAndTimebombButtons();
 
         if (PAL.PREnabled())
@@ -206,13 +204,9 @@ if (config.universeEnabled)
         
         ShowTimeSingePageLoad();
         CheckAP();
-        CountPilotsMO();
-
-        if (config.showBuildingHP)
-            ShowBuildingHP();
-
-        if (config.checkMissilesMO)
-            CheckAllMissilesMO();
+        CountPilotsMO();        
+        ShowBuildingHP();        
+        CheckAllMissilesMO();
     }
     else if (PAL.PageIs(PAL.e_page.BUILDING_TRADE) || PAL.PageIs(PAL.e_page.STARBASE_TRADE) || PAL.PageIs(PAL.e_page.PLANET_TRADE))
     {
@@ -355,6 +349,9 @@ function CheckAllMissiles()
 
 function CheckAllMissilesMO()
 {
+    if (!config.checkMissilesMO)
+        return;
+        
     var el = doc.getElementById('allmissiles');
     if (el)
     {
@@ -472,6 +469,9 @@ function SetLoggingLevel()
 // #TODO breaks bot use on blocking MOs... wut.
 function ShowBuildingHP()
 {
+    if (!config.showBuildingHP)
+        return;
+
     var conditionBar = doc.querySelector('td[style="height:1px;"]');
     var conditionTbl = doc.querySelector("table[cellspacing='0'][cellpadding='0'][border='0']");
 
@@ -1663,6 +1663,9 @@ function TimeUpdateCallback()
 /* Adds OC/BAL/DC Buttons to the nav screen. */
 function InjectCombatModeButtons()
 {
+    if (!config.useFastCombatModes)
+        return;
+        
     var target = doc.getElementById('cargo');
     var oc_class = "", dc_class = "", bal_class = "";
 
