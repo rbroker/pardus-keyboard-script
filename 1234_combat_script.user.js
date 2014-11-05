@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         13
+// @version         14
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         http://www.grandunifyingalliance.com/gm/pal/1/pal.js
 // @author          Richard Broker (Beigeman)
@@ -338,36 +338,39 @@ function CommonNav()
 /* Function by Rhindon. Checks all missiles on combat screen. */
 function CheckAllMissiles()
 {
-    if (config.pql[ql_index].useMissiles === true)
-    {
-        var el = doc.getElementById('allmissiles');
-
-        if (el)
-            el.click();
-    }
+    var el = doc.getElementById('allmissiles');
+    
+    if (!el)
+        return;
+        
+    if (((config.pql[ql_index].useMissiles) && (!el.checked)) ||
+        ((!config.pql[ql_index].useMissiles) && (el.checked)))
+        el.click();    
 }
 
 function CheckAllMissilesMO()
 {
-    if (!config.checkMissilesMO)
+    var el = doc.getElementById('allmissiles');
+    
+    if (!el)
         return;
         
-    var el = doc.getElementById('allmissiles');
-    if (el)
-    {
-        el.click();
-    }
+    if (((config.checkMissilesMO) && (!el.checked)) ||
+        ((!config.checkMissilesMO) && (el.checked)))
+        el.click();        
 }
 
 function CheckRaid()
 {
-    if (config.pql[ql_index].attackMode.charAt(0) === 'r')
-    {
-        var el = doc.getElementById('letsurrender');
-
-        if (el)
-            el.checked = true;
-    }
+    var el = doc.getElementById('letsurrender');
+    
+    if (!el)
+        return;
+        
+    if (config.pql[ql_index].attackMode.charAt(0) === 'r')    
+        el.checked = true;
+    else
+        el.checked = false;
 }
 
 /* Returns either f,u,e or n. */
