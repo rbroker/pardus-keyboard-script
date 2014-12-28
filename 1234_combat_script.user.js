@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         14
+// @version         15
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         http://www.grandunifyingalliance.com/gm/pal/1/pal.js
 // @author          Richard Broker (Beigeman)
@@ -202,6 +202,7 @@ if (config.universeEnabled)
     {
         on_building = true;
         
+        UseBots();
         ShowTimeSingePageLoad();
         CheckAP();
         CountPilotsMO();        
@@ -412,8 +413,6 @@ function AddQuickMouseCallbacks()
 
     if (!ships)
         return;
-
-
 
     for (var i = 0; i < ships.childNodes.length; i++)
     {
@@ -771,7 +770,7 @@ function KeypressCallback(e)
         break;
 
         case config.key_use_bots:
-            if (in_combat || in_npc_combat)
+            if (in_combat || in_npc_combat || on_building)
                 SearchForTagByValue('input', 'resid', '8').parentNode.childNodes[3].click();
             else if (on_nav)
                 UseBotsNav();
@@ -1409,26 +1408,27 @@ function UseBots()
 
     var currentArmor = GetCurrentArmorValue();
     var botInput = SearchForTagByValue('input', 'resid', '8');
+   
+    if (!botInput)
+        return;
+        
 
-    if (botInput)
+    var botBox = botInput.parentNode.childNodes[1];
+    var botAmount = calculateBotRequirement(currentArmor);
+    var currentBots = parseInt(botBox.parentNode.parentNode.childNodes[1], 10);
+
+    if (currentBots < botAmount)
     {
-        var botBox = botInput.parentNode.childNodes[1];
-        var botAmount = calculateBotRequirement(currentArmor);
-        var currentBots = parseInt(botBox.parentNode.parentNode.childNodes[1], 10);
+        PAL.Toast('WARNING: BOTS LOW!', PAL.e_toastStyle.NOTIFY);
+        botAmount = currentBots;
+    }
 
-        if (currentBots < botAmount)
-        {
-            PAL.Toast('WARNING: BOTS LOW!', PAL.e_toastStyle.NOTIFY);
-            botAmount = currentBots;
-        }
+    /* Notify User */
+    if (botAmount > 0)
+    {
+        botBox.value = botAmount;
 
-        /* Notify User */
-        if (botAmount > 0)
-        {
-            botBox.value = botAmount;
-
-            PAL.Toast('PRESS "' + config.key_use_bots + '" TO USE ' + botAmount + ' BOTS.', PAL.e_toastStyle.NOTIFY);
-        }
+        PAL.Toast('PRESS "' + config.key_use_bots + '" TO USE ' + botAmount + ' BOTS.', PAL.e_toastStyle.NOTIFY);
     }
 }
 
