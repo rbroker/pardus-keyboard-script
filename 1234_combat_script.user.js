@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         15
+// @version         16
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         http://www.grandunifyingalliance.com/gm/pal/1/pal.js
 // @author          Richard Broker (Beigeman)
@@ -423,42 +423,24 @@ function AddQuickMouseCallbacks()
 
         id = id[0];
 
-        var shipImg = ships.childNodes[i].childNodes[0].childNodes[0].childNodes[0];
+        var shipTd = ships.childNodes[i].childNodes[0].childNodes[0].childNodes[0];
 
-        if (!shipImg)
+        if (!shipTd)
             continue;
-
-        shipImg.setAttribute('onclick', 'return false;'); // Doesn't work in chrome unless you remove the old onclick first.
 
         if (config.quickMouse == ACTION_ATTACK)
         {
-            shipImg.onclick = QuickMouseCallbackAttack(id);
-            shipImg.title = "Attack!";
+            shipTd.setAttribute('onclick', 'document.location.href = "ship2ship_combat.php?playerid=' + id + '";');
+            //shipTd.onclick = QuickMouseCallbackAttack(id);
+            shipTd.title = "Attack!";
         }
         else if (config.quickMouse == ACTION_TRADE)
         {
-            shipImg.onclick = QuickMouseCallbackTrade(id);
-            shipImg.title = "Trade!";
+            shipTd.setAttribute('onclick', 'document.location.href = "ship2ship_transfer.php?playerid=' + id + '";');
+            //shipTd.onclick = QuickMouseCallbackTrade(id);
+            shipTd.title = "Trade!";
         }
     }
-}
-
-function QuickMouseCallbackAttack(id)
-{
-    return function()
-    {
-        PAL.DebugLog("Attacking by image click: " + id, PAL.e_logLevel.VERBOSE);
-        doc.location.href = "ship2ship_combat.php?playerid=" + id;
-    };
-}
-
-function QuickMouseCallbackTrade(id)
-{
-    return function()
-    {
-        PAL.DebugLog("Trading by image click: " + id, PAL.e_logLevel.VERBOSE);
-        doc.location.href = "ship2ship_transfer.php?playerid=" + id;
-    };
 }
 
 function SetLoggingLevel()
