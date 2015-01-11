@@ -1397,13 +1397,12 @@ function UseBots()
 
     var botBox = botInput.parentNode.childNodes[1];
     var botAmount = calculateBotRequirement(currentArmor);
-    var currentBots = parseInt(botBox.parentNode.parentNode.childNodes[1], 10);
+    var currentBots = parseInt(botBox.parentNode.parentNode.childNodes[1].textContent, 10);
 
+    console.log(botBox.parentNode.parentNode.childNodes[1]);
+    
     if (currentBots < botAmount)
-    {
-        PAL.Toast('WARNING: BOTS LOW!', PAL.e_toastStyle.NOTIFY);
         botAmount = currentBots;
-    }
 
     /* Notify User */
     if (botAmount > 0)
@@ -1464,10 +1463,14 @@ function UseBotsNav()
         var body = doc.body;
         var div = doc.createElement('div');
 
-        if (botsAvail < botsRequired) botsRequired = botsAvail;
+        console.log(botsRequired);
+        console.log(botsAvail);
+        
+        if (botsAvail < botsRequired) 
+            botsRequired = botsAvail;
 
         if (botsRequired > 0)
-        {
+        {        
             div.innerHTML = '<form id="useform" style="display:none;" action="main.php" method="get" name="useform"><input type="text" name="amount" value="' + botsRequired + '"><input type="hidden" value="8" name="resid"><input type="submit" value="Use" name="useres"></form>';
             body.insertBefore(div, body.childNodes[0]);
             SearchForTagByValue('input', 'useres', 'Use').click();
