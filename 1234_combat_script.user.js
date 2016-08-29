@@ -1,4 +1,4 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name            Beige's Keyboard Script
 // @namespace       www.pardus.at
 // @description     Provides additional keyboard-based functionality.
@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         17
+// @version         18
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         https://raw.githubusercontent.com/rbroker/pardusmonkey-abstraction-layer/master/pal.js
 // @author          Richard Broker (Beigeman)
@@ -21,7 +21,7 @@
 var PAL = PardusMonkey("Beige's Combat Script", "PAL52028fe910329");
 var doc = document;
 var url = doc.location.href; // Don't move this down in the code!
-var CONFIG_VERSION = 7;    // Only update this if the config changes, or users will lose their config.
+var CONFIG_VERSION = 8;    // Only update this if the config changes, or users will lose their config.
 
 /*
  * Localstorage value keys. Used to load script configuration.
@@ -70,7 +70,7 @@ var QL_COMBAT_ROUNDS = 21;
  * Default keybindings
  */
 var DEFAULT_KEY_RETREAT = 'r';
-var DEFAULT_KEY_RETURN_NAV = 'n';
+var DEFAULT_KEY_RETURN_NAV = 'w';
 var DEFAULT_KEY_AMBUSH = 'a';
 var DEFAULT_KEY_AMBUSH_RETREAT = 's';
 var DEFAULT_KEY_CLOAK = 'c';
@@ -131,21 +131,29 @@ if (config !== null)
             upgrade_4_2_to_5();
             upgrade_5_to_6();
             upgrade_6_to_7();
+            upgrade_7_to_8();
         }
         else if (config.version === 4.2)
         {
             upgrade_4_2_to_5();
             upgrade_5_to_6();
             upgrade_6_to_7();
+            upgrade_7_to_8();
         }
         else if (config.version === 5)
         {
             upgrade_5_to_6();
             upgrade_6_to_7();
+            upgrade_7_to_8();
         }
         else if (config.version === 6)
         {
             upgrade_6_to_7();
+            upgrade_7_to_8();
+        }
+        else if (config.version === 7)
+        {
+            upgrade_7_to_8();
         }
         else
         {
@@ -289,6 +297,8 @@ function ApplyDefaultConfig()
     config.quickMouse = ACTION_DEFAULT; // Defines action performed when clicking ship image on Nav. 0: Default,  1: Attack, 2: Trade
     config.countPilots = false;        // Enable counting the number of pilots on the current tile.
     config.disableSpacebarScroll = false; // Disable scrolling the page when hitting space bar. Use if you have key bound to space bar.
+    config.overlayEnabled = false;  // Disable overlay on nav to indicate which tiles were most recently travelled.
+    config.overlayLifetime = 300; // Time in seconds for which the overlay considers a tile to have been visited.
     config.key_retreat = DEFAULT_KEY_RETREAT;
     config.key_return_nav = DEFAULT_KEY_RETURN_NAV;
     config.key_ambush = DEFAULT_KEY_AMBUSH;
@@ -333,7 +343,8 @@ function CommonNav()
     CheckAPNav();
     InjectRepairButtons();
     AddQuickMouseCallbacks();
-    CountPilotsNav();    
+    CountPilotsNav();   
+    ShowOverlay();    
 }
 
 /* Function by Rhindon. Checks all missiles on combat screen. */
@@ -1376,9 +1387,7 @@ function contains(value, array)
 function stripPaintJobs(shipName)
 {
     shipName = shipName.replace(/_xmas/gi, '');
-    shipName = shipName.replace(/_paint01/gi, '');
-    shipName = shipName.replace(/_paint02/gi, '');
-    shipName = shipName.replace(/_paint03/gi, '');
+    shipName = shipName.replace(/_paint\d+/gi, '');
     return shipName;
 }
 
@@ -1875,6 +1884,122 @@ function ShowTarget(verbose)
     }
 }
 
+function GetNavTable()
+{
+    var area = doc.getElementById("navareatransition");
+
+    if (area)
+        return area;
+    else
+        return doc.getElementById("navarea");
+}
+
+function ShowOverlay()
+{
+    if (!config.showOverlay)
+        return;
+        
+    var overlayData = JSON.parse(PAL.GetValue("overlay_tiles", null, PAL.e_storageType.SESSION));
+    
+    if (overlayData === null)
+    {
+        overlayData = [];
+        PAL.DebugLog("overlayData was empty, reinitializing!", PAL.e_logLevel.VERBOSE);
+    }   
+    
+    var userloc = PAL.GetPageVariable(PAL.e_pageVar.USER_LOC);
+    var now = Date.now() / 1000; // Seconds since 1970.
+    
+    PAL.DebugLog("userloc: " + userloc + ", time: " + now, PAL.e_logLevel.VERBOSE);
+    
+    // If we already stored a value for this tile, update the existing 
+    // value.
+    var foundExisting = false;
+    for (var i = 0; i < overlayData.length; ++i)
+    {
+        if (overlayData[i].userloc != userloc)
+            continue;
+            
+        overlayData[i].time = now;
+        foundExisting = true;
+        break;
+    }
+    
+    if (!foundExisting)
+        overlayData.push({ "userloc" : userloc, "time" : now });
+    
+    PAL.SetValue("overlay_tiles", JSON.stringify(overlayData), PAL.e_storageType.SESSION);
+    
+    var navArea = GetNavTable();
+    var dataCells = navArea.getElementsByTagName('td');
+    
+    for (var i = 0; i < dataCells.length; ++i)
+    {
+        var links = dataCells[i].getElementsByTagName('a');
+        
+        if (links.length === 0)
+            continue;
+            
+        var timeOfLastVisit = undefined;
+            
+        if (PAL.PREnabled())
+        {
+            if (links[0].onclick !== null)
+            {        
+                var linkUserloc = links[0].onclick.toString().match(/\d+/)[0];
+                
+                for (var j = 0; j < overlayData.length; ++j)
+                {
+                    if (overlayData[j].userloc !== linkUserloc)
+                        continue;
+                        
+                    timeOfLastVisit = overlayData[j].time;                    
+                }
+            }
+            else
+            {
+                // We're on a planet / wormhole / starbase.
+                timeOfLastVisit = now;
+            }
+        }
+        else
+        {
+        }
+        
+        if (timeOfLastVisit === undefined)
+                continue;              
+        
+        var timeSinceLastVisit = now - timeOfLastVisit;        
+        
+        PAL.DebugLog("last visit to:  " + linkUserloc + " was " + timeSinceLastVisit + " seconds ago.", PAL.e_logLevel.VERBOSE);
+        
+        if (timeSinceLastVisit > config.overlayLifetime)
+            continue;
+            
+        var red = 0;
+        var green = 255;
+        var colourFade = Math.round((255 / config.overlayLifetime) * timeSinceLastVisit);
+        
+        red += colourFade;
+        green -= colourFade;
+        
+        var overlayDiv = doc.createElement('div');
+        
+        overlayDiv.appendChild(links[0]);
+        dataCells[i].appendChild(overlayDiv);
+        
+        if (dataCells[i].className == "navClear")
+        {
+            overlayDiv.style = "background: rgba(" + red + "," + green + ",0, 1.0);";
+            links[0].firstChild.style = "opacity: 0.5";
+        }
+        else
+        {
+            overlayDiv.style = "background: rgba(" + red + "," + green + ",0, 0.5);";
+        }
+    }
+}
+
 /* *******************************************
  * Add config for script on "options" tab in game.
  * ******************************************* */
@@ -1920,6 +2045,9 @@ function InjectOptionsForm()
             ["Display number of pilots on current tile", "countPilots"],
             ["Show time since last page load on nav/building/PvP", "showTimeSincePageLoad"],
             ["Disable page scroll when pressing space bar", "disableSpacebarScroll"],
+            ["Overlay for recently visited nav tiles", "showOverlay"],
+            [],
+            ["Duration (in seconds) for which the visited tiles are overlaid:", "overlayLifetime"],
             [],
             ["Action when clicking ship image on Nav:", "quickMouse", [0,1,2], ["Default (view profile)", "Attack Pilot", "Trade with Pilot"]],
             [],
@@ -2102,5 +2230,14 @@ function upgrade_6_to_7()
     config.showTimeSincePageLoad = false;
     config.disableSpacebarScroll = false;
     config.version = 7;
+    PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
+}
+
+function upgrade_7_to_8()
+{
+    config.showOverlay = false;
+    config.overlayLifetime = 300;
+    config.version = 8;
+    
     PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
 }
