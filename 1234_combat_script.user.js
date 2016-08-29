@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         18
+// @version         19
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         https://raw.githubusercontent.com/rbroker/pardusmonkey-abstraction-layer/master/pal.js
 // @author          Richard Broker (Beigeman)
@@ -1407,8 +1407,6 @@ function UseBots()
     var botBox = botInput.parentNode.childNodes[1];
     var botAmount = calculateBotRequirement(currentArmor);
     var currentBots = parseInt(botBox.parentNode.parentNode.childNodes[1].textContent, 10);
-
-    console.log(botBox.parentNode.parentNode.childNodes[1]);
     
     if (currentBots < botAmount)
         botAmount = currentBots;
@@ -1471,9 +1469,6 @@ function UseBotsNav()
         var botsRequired = calculateBotRequirement(doc.getElementById('spanShipArmor').textContent);
         var body = doc.body;
         var div = doc.createElement('div');
-
-        console.log(botsRequired);
-        console.log(botsAvail);
         
         if (botsAvail < botsRequired) 
             botsRequired = botsAvail;
@@ -1944,9 +1939,11 @@ function ShowOverlay()
             
         if (PAL.PREnabled())
         {
-            if (links[0].onclick !== null)
-            {        
-                var linkUserloc = links[0].onclick.toString().match(/\d+/)[0];
+            var userlocMatch = links[0].outerHTML.match(/\d+/);
+                
+            if (userlocMatch !== null)
+            {
+                var linkUserloc = userlocMatch[0];
                 
                 for (var j = 0; j < overlayData.length; ++j)
                 {
