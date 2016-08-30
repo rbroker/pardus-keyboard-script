@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         19
+// @version         20
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         https://raw.githubusercontent.com/rbroker/pardusmonkey-abstraction-layer/master/pal.js
 // @author          Richard Broker (Beigeman)
@@ -21,7 +21,7 @@
 var PAL = PardusMonkey("Beige's Combat Script", "PAL52028fe910329");
 var doc = document;
 var url = doc.location.href; // Don't move this down in the code!
-var CONFIG_VERSION = 8;    // Only update this if the config changes, or users will lose their config.
+var CONFIG_VERSION = 9;    // Only update this if the config changes, or users will lose their config.
 
 /*
  * Localstorage value keys. Used to load script configuration.
@@ -132,6 +132,7 @@ if (config !== null)
             upgrade_5_to_6();
             upgrade_6_to_7();
             upgrade_7_to_8();
+            upgrade_8_to_9();
         }
         else if (config.version === 4.2)
         {
@@ -139,21 +140,29 @@ if (config !== null)
             upgrade_5_to_6();
             upgrade_6_to_7();
             upgrade_7_to_8();
+            upgrade_8_to_9();
         }
         else if (config.version === 5)
         {
             upgrade_5_to_6();
             upgrade_6_to_7();
             upgrade_7_to_8();
+            upgrade_8_to_9();
         }
         else if (config.version === 6)
         {
             upgrade_6_to_7();
             upgrade_7_to_8();
+            upgrade_8_to_9();
         }
         else if (config.version === 7)
         {
             upgrade_7_to_8();
+            upgrade_8_to_9();
+        }
+        else if (config.version === 8)
+        {
+            upgrade_8_to_9();
         }
         else
         {
@@ -297,7 +306,7 @@ function ApplyDefaultConfig()
     config.quickMouse = ACTION_DEFAULT; // Defines action performed when clicking ship image on Nav. 0: Default,  1: Attack, 2: Trade
     config.countPilots = false;        // Enable counting the number of pilots on the current tile.
     config.disableSpacebarScroll = false; // Disable scrolling the page when hitting space bar. Use if you have key bound to space bar.
-    config.overlayEnabled = false;  // Disable overlay on nav to indicate which tiles were most recently travelled.
+    config.showOverlay = false;  // Disable overlay on nav to indicate which tiles were most recently travelled.
     config.overlayLifetime = 300; // Time in seconds for which the overlay considers a tile to have been visited.
     config.key_retreat = DEFAULT_KEY_RETREAT;
     config.key_return_nav = DEFAULT_KEY_RETURN_NAV;
@@ -2235,6 +2244,14 @@ function upgrade_7_to_8()
     config.showOverlay = false;
     config.overlayLifetime = 300;
     config.version = 8;
+    
+    PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
+}
+
+function upgrade_8_to_9()
+{
+    config.showOverlay = false;
+    config.version = 9;
     
     PAL.SetValue(CONFIG_STORAGE_STR, JSON.stringify(config));
 }
