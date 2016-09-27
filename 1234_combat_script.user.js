@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         20
+// @version         21
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         https://raw.githubusercontent.com/rbroker/pardusmonkey-abstraction-layer/master/pal.js
 // @author          Richard Broker (Beigeman)
@@ -1945,32 +1945,26 @@ function ShowOverlay()
             continue;
             
         var timeOfLastVisit = undefined;
+        var userlocMatch = links[0].outerHTML.match(/\d+/);
             
-        if (PAL.PREnabled())
+        if (userlocMatch !== null)
         {
-            var userlocMatch = links[0].outerHTML.match(/\d+/);
-                
-            if (userlocMatch !== null)
+            var linkUserloc = userlocMatch[0];
+            
+            for (var j = 0; j < overlayData.length; ++j)
             {
-                var linkUserloc = userlocMatch[0];
-                
-                for (var j = 0; j < overlayData.length; ++j)
-                {
-                    if (overlayData[j].userloc !== linkUserloc)
-                        continue;
-                        
-                    timeOfLastVisit = overlayData[j].time;                    
-                }
-            }
-            else
-            {
-                // We're on a planet / wormhole / starbase.
-                timeOfLastVisit = now;
+                if (overlayData[j].userloc !== linkUserloc)
+                    continue;
+                    
+                timeOfLastVisit = overlayData[j].time;                    
             }
         }
         else
         {
+            // We're on a planet / wormhole / starbase.
+            timeOfLastVisit = now;
         }
+
         
         if (timeOfLastVisit === undefined)
                 continue;              
