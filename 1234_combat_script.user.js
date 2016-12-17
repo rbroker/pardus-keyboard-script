@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         21
+// @version         22
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         https://raw.githubusercontent.com/rbroker/pardusmonkey-abstraction-layer/master/pal.js
 // @author          Richard Broker (Beigeman)
@@ -532,7 +532,7 @@ function CountPilotsMO()
 
     for (var i = 0; i < ths.length; i++)
     {
-        if (ths[i].textContent === "Other Ships")
+        if (ths[i].textContent.indexOf("Other Ships") !== -1)
         {
             header = ths[i];
             dataCells = ths[i].parentNode.parentNode.getElementsByTagName('td');
@@ -1045,7 +1045,7 @@ function ScanMO()
 
     for (var i = 0; i < ths.length; i++)
     {
-        if (ths[i].textContent === "Other Ships")
+        if (ths[i].textContent.indexOf("Other Ships") != -1)
         {
             ships = ths[i].parentNode.parentNode.getElementsByTagName('td');
             break;
