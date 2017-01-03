@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         22
+// @version         23
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         https://raw.githubusercontent.com/rbroker/pardusmonkey-abstraction-layer/master/pal.js
 // @author          Richard Broker (Beigeman)
@@ -2107,7 +2107,7 @@ function InjectOptionsForm()
 
 function StoreConfiguration()
 {
-    if (!(VerifyKeybindings() && VerifyNumericFields()))
+    if (!(VerifyKeybindings() && VerifyNumericFields() && VerifyTextFields()))
         return;
 
     ParsePriorityTargets();
@@ -2133,6 +2133,37 @@ function ParsePriorityTargets()
     }
 }
 
+function VerifyTextFields()
+{
+    if (config.ql1.length == 1)
+    {
+        PAL.Toast("Invalid QL Length for QL #1!", PAL.e_toastStyle.ERROR);
+        return false;
+    }
+    if (config.ql2.length == 1)
+    {
+        PAL.Toast("Invalid QL Length for QL #2!", PAL.e_toastStyle.ERROR);
+        return false;
+    }
+    if (config.ql3.length == 1)
+    {
+        PAL.Toast("Invalid QL Length for QL #3!", PAL.e_toastStyle.ERROR);
+        return false;
+    }
+    if (config.ql4.length == 1)
+    {
+        PAL.Toast("Invalid QL Length for QL #4!", PAL.e_toastStyle.ERROR);
+        return false;
+    }
+    if (config.priorityTargets.length == 1)
+    {
+        PAL.Toast("Invalid length for priority targets!", PAL.e_toastStyle.ERROR);
+        return false;
+    }
+    
+    return true;
+}
+
 function VerifyNumericFields()
 {
     if (!isNumber(config.maxArmor))
@@ -2150,6 +2181,17 @@ function VerifyNumericFields()
         PAL.Toast("Low AP Threshold must be a number!", PAL.e_toastStyle.ERROR);
         return false;
     }
+    if (!isNumber(config.overlayLifetime))
+    {
+        PAL.Toast("The overlay duration must be a number!", PAL.e_toastStyle.ERROR);
+        return false;
+    }    
+    
+    config.maxArmor = Number(config.maxArmor);
+    config.newbieThreshold = Number(config.newbieThreshold);
+    config.lowAPThreshold = Number(config.lowAPThreshold);
+    config.overlayLifetime = Number(config.overlayLifetime);
+    
     return true;
 }
 
