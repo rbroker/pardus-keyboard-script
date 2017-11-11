@@ -9,7 +9,7 @@
 // @exclude         http*://*.pardus.at/msgframe.php*
 // @exclude         http*://*.pardus.at/game.php*
 // @exclude         http*://*.pardus.at/menu.php*
-// @version         23
+// @version         24
 // @downloadURL     https://raw.githubusercontent.com/rbroker/pardus-keyboard-script/master/1234_combat_script.user.js
 // @require         https://raw.githubusercontent.com/rbroker/pardusmonkey-abstraction-layer/master/pal.js
 // @author          Richard Broker (Beigeman)
